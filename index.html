@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="A planner for finding the best topic, genre, and platform combinations in Game Dev Tycoon." />
-    <title>DevDeck — Game Dev Tycoon planner</title>
+    <title>GDT Companion — Game Dev Tycoon planner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -13,12 +13,13 @@
   <body>
     <div class="shell">
       <aside class="sidebar">
-        <div class="brand"><span class="brand-mark">✦</span><span>DevDeck</span></div>
+        <div class="brand"><span class="brand-mark">✦</span><span>GDT Companion</span></div>
         <p class="brand-subtitle">GAME DEV TYCOON<br />COMBINATION LAB</p>
         <nav>
           <button class="nav-link active" data-view="planner"><span>⌘</span> Planner</button>
           <button class="nav-link" data-view="topics"><span>◈</span> My topics</button>
           <button class="nav-link" data-view="guide"><span>▤</span> Game guide</button>
+          <button class="nav-link" data-view="reference"><span>▥</span> Reference tables</button>
           <button class="nav-link" data-view="about"><span>ⓘ</span> Method</button>
         </nav>
         <div class="sidebar-footer">
@@ -29,7 +30,7 @@
 
       <main class="main">
         <header class="topbar">
-          <div><span class="eyebrow">COMBINATION LAB / 01</span><h1>Find your next hit.</h1></div>
+          <div><span class="eyebrow">GDT COMPANION / 01</span><h1>Find your next hit.</h1></div>
           <div class="top-actions"><button class="icon-button" id="resetBtn" title="Reset filters">↺</button><div class="avatar">GD</div></div>
         </header>
 
@@ -44,7 +45,7 @@
             <div class="controls-grid">
               <div class="field field-wide"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search a topic..." /></div><div id="topicChips" class="chip-list"></div></div>
               <div class="field"><label for="platformFilter">PLATFORM OF INTEREST</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Filter by platform, or compare them all.</p></div>
-              <div class="field"><label for="genreFilter">GENRE</label><select id="genreFilter"><option value="all">All genres</option></select><p class="field-hint">Show one preferred genre only.</p></div>
+              <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Pick one genre to narrow the results.</p></div>
             </div>
           </section>
 
@@ -66,11 +67,19 @@
             <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◷</span><span class="guide-label">LATE GAME</span></div><h3>Large, AAA and MMO checklist</h3><div class="check-grid"><p>✓ Large games: keep making Medium games until your fanbase and team can support the jump.</p><p>✓ AAA: use at least 3D Graphics V5 and three specialists in important design aspects.</p><p>✓ MMO: use an MMO Support engine and a +++ topic/genre pair.</p><p>✓ Expansions: wait at least 40 weeks between releases to avoid the major quality hit.</p><p>✓ G3: time development so phase 2 overlaps the June convention boost.</p><p>✓ Custom hardware: keep your console tech level aligned with the current generation.</p></div></article>
           </div>
         </section>
-        <section id="aboutView" class="view hidden"><div class="page-intro"><span class="eyebrow">HOW IT WORKS</span><h2>The method, no magic.</h2><p>DevDeck provides a practical ranking, not an exact score prediction: in-game results also depend on sliders, design/tech points, audience, game size, freshness and your current Target High Score.</p></div><div class="method-grid"><article><span class="method-number">01</span><h3>Topic × genre</h3><p>The primary compatibility, from “Great” to “Bad”, carries the most weight.</p></article><article><span class="method-number">02</span><h3>Genre × platform</h3><p>Some platforms naturally favor certain genres; this filter helps narrow the field.</p></article><article><span class="method-number">03</span><h3>A signal, not a prophecy</h3><p>Use the ranking as a starting point for deciding what to develop next.</p></article></div><div class="sources"><h3>Sources consulted</h3><p>The guide was cross-checked against the <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild updated for 1.7.8</a>, the <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">1.7.8 community guide</a>, its <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oged1p/simpleish_guide_for_178_expanded_part_2/" target="_blank" rel="noreferrer">part 2</a>, <a href="https://www.reddit.com/r/GameDevTycoon/comments/1otq1e4/simpleish_guide_for_178_expanded_part_3/" target="_blank" rel="noreferrer">part 3</a>, and the open-source <a href="https://github.com/reiswaffel78/Game-Dev-Tycoon-advicer" target="_blank" rel="noreferrer">Game-Dev-Tycoon-advicer</a>. The dataset is curated for the base game and can be expanded.</p></div></section>
+        <section id="aboutView" class="view hidden"><div class="page-intro"><span class="eyebrow">HOW IT WORKS</span><h2>The method, no magic.</h2><p>GDT Companion provides a practical ranking, not an exact score prediction: in-game results also depend on sliders, design/tech points, audience, game size, freshness and your current Target High Score.</p></div><div class="method-grid"><article><span class="method-number">01</span><h3>Topic × genre</h3><p>The primary compatibility, from “Great” to “Bad”, carries the most weight.</p></article><article><span class="method-number">02</span><h3>Genre × platform</h3><p>Some platforms naturally favor certain genres; this filter helps narrow the field.</p></article><article><span class="method-number">03</span><h3>A signal, not a prophecy</h3><p>Use the ranking as a starting point for deciding what to develop next.</p></article></div><div class="sources"><h3>Sources consulted</h3><p>The guide was cross-checked against the <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild updated for 1.7.8</a>, the <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">1.7.8 community guide</a>, its <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oged1p/simpleish_guide_for_178_expanded_part_2/" target="_blank" rel="noreferrer">part 2</a>, <a href="https://www.reddit.com/r/GameDevTycoon/comments/1otq1e4/simpleish_guide_for_178_expanded_part_3/" target="_blank" rel="noreferrer">part 3</a>, and the open-source <a href="https://github.com/reiswaffel78/Game-Dev-Tycoon-advicer" target="_blank" rel="noreferrer">Game-Dev-Tycoon-advicer</a>. The dataset is curated for the base game and can be expanded.</p></div></section>
+        <section id="referenceView" class="view hidden">
+          <div class="page-intro"><span class="eyebrow">REFERENCE / ALL TABLES</span><h2>The numbers behind the picks.</h2><p>Use this page when you want to inspect the full compatibility grid instead of getting a ranked shortlist. Values are the in-game language: <strong>+++</strong> Great, <strong>++</strong> Good, <strong>+</strong> Okay, <strong>--</strong> Bad, <strong>---</strong> Terrible.</p></div>
+          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">TOPIC × GENRE</span><h3>All topic combinations</h3></div><input id="referenceSearch" class="reference-search" type="search" placeholder="Filter topics..." /></div><div class="table-wrap"><table id="topicMatrix" class="reference-table"></table></div></div>
+          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">PLATFORM × GENRE</span><h3>Platform compatibility</h3></div></div><div class="table-wrap"><table id="platformMatrix" class="reference-table"></table></div></div>
+          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">TOPIC × AUDIENCE</span><h3>Topic audience compatibility</h3></div></div><div class="table-wrap"><table id="audienceTopicMatrix" class="reference-table"></table></div></div>
+          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">PLATFORM × AUDIENCE</span><h3>Platform audience compatibility</h3></div></div><div class="table-wrap"><table id="audiencePlatformMatrix" class="reference-table"></table></div></div>
+          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">SLIDER REFERENCE</span><h3>Recommended phase percentages</h3></div><span class="table-note">Engine / Gameplay / Story · Dialogues / Level Design / AI · World Design / Graphics / Sound</span></div><div class="table-wrap"><table id="sliderMatrix" class="reference-table"></table></div></div>
+        </section>
         <footer class="site-footer">
-          <div><span class="eyebrow">REFERENCE DESK</span><p>DevDeck is a fan-made helper for Game Dev Tycoon. Game data and strategy notes are based on the sources below.</p></div>
+          <div><span class="eyebrow">REFERENCE DESK</span><p>GDT Companion is a fan-made helper for Game Dev Tycoon. Game data and strategy notes are based on the sources below.</p></div>
           <div class="footer-links"><a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild · 1.7.8</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">Community guide · part 1</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1oged1p/simpleish_guide_for_178_expanded_part_2/" target="_blank" rel="noreferrer">Community guide · part 2</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1otq1e4/simpleish_guide_for_178_expanded_part_3/" target="_blank" rel="noreferrer">Community guide · part 3</a><a href="https://github.com/reiswaffel78/Game-Dev-Tycoon-advicer" target="_blank" rel="noreferrer">Game-Dev-Tycoon-advicer</a></div>
-          <small>Sources are credited for reference; DevDeck is not affiliated with Greenheart Games.</small>
+          <small>Sources are credited for reference; GDT Companion is not affiliated with Greenheart Games.</small>
         </footer>
       </main>
     </div>

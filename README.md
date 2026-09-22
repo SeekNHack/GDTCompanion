@@ -1,4 +1,4 @@
-# DevDeck
+# GDT Companion
 
 Static planner for finding topic / genre / platform combinations for **Game Dev Tycoon**.
 
