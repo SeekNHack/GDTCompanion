@@ -17,7 +17,7 @@ window.GDT_REFERENCE = {
     Strategy:[.9,1,.8,.7,1,.9,1,.8,.9],
     Casual:[.6,1,.7,.7,1,.6,.7,1,.9]
   },
-  overrides:{
+  adjustments:{
     Sports:{Action:[.9,null,1,.7,.8,1,.6,null,null],Adventure:[null,.9,null,null,.9,null,null,null,null],RPG:[null,1,.9,null,null,null,.7,1,.9],Simulation:[null,null,null,.8,null,null,.7,null,null],Strategy:[.8,1,.9,null,null,null,.8,1,.9]},
     Racing:{Action:[null,.9,null,null,null,null,.7,.9,1],Simulation:[null,null,null,null,null,null,.7,.9,1],Strategy:[null,null,null,null,null,null,.7,.9,1]},
     Mystery:{Action:[.9,.8,1,.9,1,.8,1,.8,.9],Simulation:[.8,1,.9,.8,1,.9,1,.8,.9],Strategy:[.8,1,.9,.8,1,.9,1,.8,.9]},

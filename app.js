@@ -9,7 +9,7 @@ const SLIDER_VALUES = {Action:[[100,80,0],[0,80,100],[0,100,80]],Adventure:[[0,8
 const PHASE_LABELS = [['Engine','Gameplay','Story / Quests'],['Dialogues','Level Design','AI'],['World Design','Graphics','Sound']];
 const STORAGE_KEY = 'devdeck-topics-v1';
 const $ = id => document.getElementById(id);
-const REF = window.GDT_REFERENCE || {genres:GENRES, audiences:['Young','Everyone','Mature'], topics:[], platforms:[], overrides:{}};
+const REF = window.GDT_REFERENCE || {genres:GENRES, audiences:['Young','Everyone','Mature'], topics:[], platforms:[], adjustments:{}};
 const REF_GENRES = REF.genres;
 const REF_TOPIC_BY_NAME = new Map(REF.topics.map(row=>[row[0],row]));
 const REF_PLATFORM_BY_NAME = new Map(REF.platforms.map(row=>[row[0],row]));
@@ -41,8 +41,8 @@ function fitFor(topic,genre){
 function normalizedFit(value){return value>=.95?3:value>=.85?2:value>=.75?1:value>=.65?0:-1;}
 function effectivePriority(topic,genre){
   const base=REF.basePriorities?.[genre] || Array(9).fill(.8);
-  const override=REF.overrides?.[topic]?.[genre];
-  return base.map((value,index)=>override?.[index] ?? value);
+  const adjustment=REF.adjustments?.[topic]?.[genre];
+  return base.map((value,index)=>adjustment?.[index] ?? value);
 }
 function prioritySlider(topic,genre){
   const values=effectivePriority(canonicalTopic(topic),genre);
@@ -112,7 +112,7 @@ function renderAnalysis(){
   const result=candidates[0];
   const slider=prioritySlider(result.topic,result.genre);
   $('analysisResult').classList.remove('hidden');
-  $('analysisResult').innerHTML=`<div class="analysis-header"><div><span class="eyebrow">03 / GAME PLAN</span><h2>${result.topic} <em>×</em> ${result.genre}</h2><p>${result.size} game · ${result.platform} · ${result.audience} audience</p></div><div class="analysis-score"><span>ESTIMATED FIT</span><strong>${result.score.toFixed(1)}</strong><small>/ 10</small></div></div><div class="analysis-body"><div class="compatibility-panel"><div class="subheading"><span class="eyebrow">COMPATIBILITY BREAKDOWN</span><span class="legend">+++ best · --- avoid</span></div>${[['Topic × Genre',result.compat.topicGenre],['Topic × Audience',result.compat.topicAudience],['Platform × Genre',result.compat.platformGenre],['Platform × Audience',result.compat.platformAudience]].map(x=>`<div class="compatibility-line"><span>${x[0]}</span><b class="fit-${x[1]>=3?'3':x[1]===2?'2':x[1]===1?'1':x[1]===0?'0':'neg'}">${fitLabel(x[1])}</b><i><em style="width:${Math.max(8,(x[1]+1)*25)}%"></em></i></div>`).join('')}</div><div class="why-panel"><span class="eyebrow">WHY THIS PICK</span><h3>${result.score>=8?'Strong setup':'Best available setup'}</h3><p>The planner selected the highest-scoring topic from your available topics for this setup. Use the phase plan as a starting preset and keep the game’s graphics, staff skills and current high score in mind.</p><button class="text-button" id="showAllPlans">Compare all matching topics →</button></div></div><div class="phase-plan"><div class="subheading"><div><span class="eyebrow">DEVELOPMENT PHASES</span><h3>Slider starting points</h3></div><span class="legend">${result.topic} × ${result.genre} priority preset · ${result.size} game</span></div><div class="phase-cards">${slider.map((values,index)=>`<div class="phase-plan-card"><span class="eyebrow">PHASE ${index+1}</span>${PHASE_LABELS[index].map((label,i)=>`<div class="phase-row"><span>${label}</span><div><i style="width:${values[i]}%"></i></div><b>${values[i]}%</b></div>`).join('')}</div>`).join('')}</div><small class="plan-disclaimer">The preset uses the updated topic override when one exists; null override cells fall back to the Steam base priority. Graphics features, employee specialisation, bugs and the Target High Score can still change the final result.</small></div>`;
+  $('analysisResult').innerHTML=`<div class="analysis-header"><div><span class="eyebrow">03 / GAME PLAN</span><h2>${result.topic} <em>×</em> ${result.genre}</h2><p>${result.size} game · ${result.platform} · ${result.audience} audience</p></div><div class="analysis-score"><span>ESTIMATED FIT</span><strong>${result.score.toFixed(1)}</strong><small>/ 10</small></div></div><div class="analysis-body"><div class="compatibility-panel"><div class="subheading"><span class="eyebrow">COMPATIBILITY BREAKDOWN</span><span class="legend">+++ best · --- avoid</span></div>${[['Topic × Genre',result.compat.topicGenre],['Topic × Audience',result.compat.topicAudience],['Platform × Genre',result.compat.platformGenre],['Platform × Audience',result.compat.platformAudience]].map(x=>`<div class="compatibility-line"><span>${x[0]}</span><b class="fit-${x[1]>=3?'3':x[1]===2?'2':x[1]===1?'1':x[1]===0?'0':'neg'}">${fitLabel(x[1])}</b><i><em style="width:${Math.max(8,(x[1]+1)*25)}%"></em></i></div>`).join('')}</div><div class="why-panel"><span class="eyebrow">WHY THIS PICK</span><h3>${result.score>=8?'Strong setup':'Best available setup'}</h3><p>The planner selected the highest-scoring topic from your available topics for this setup. Use the phase plan as a starting preset and keep the game’s graphics, staff skills and current high score in mind.</p><button class="text-button" id="showAllPlans">Compare all matching topics →</button></div></div><div class="phase-plan"><div class="subheading"><div><span class="eyebrow">DEVELOPMENT PHASES</span><h3>Slider starting points</h3></div><span class="legend">${result.topic} × ${result.genre} preset · ${result.size} game</span></div><div class="phase-cards">${slider.map((values,index)=>`<div class="phase-plan-card"><span class="eyebrow">PHASE ${index+1}</span>${PHASE_LABELS[index].map((label,i)=>`<div class="phase-row"><span>${label}</span><div><i style="width:${values[i]}%"></i></div><b>${values[i]}%</b></div>`).join('')}</div>`).join('')}</div><small class="plan-disclaimer">These are the consolidated topic and genre values. Graphics features, employee specialisation, bugs and the Target High Score can still change the final result.</small></div>`;
   $('showAllPlans').addEventListener('click',()=>{$('results').scrollIntoView({behavior:'smooth',block:'start'});});
 }
 function fillSelects(){
@@ -153,9 +153,9 @@ function renderReference(){
   const sliderRows={Action:[[100,80,0],[0,80,100],[0,100,80]],Adventure:[[0,80,100],[100,0,0],[100,80,0]],RPG:[[0,80,100],[100,80,0],[100,100,80]],Simulation:[[80,100,0],[0,80,100],[0,100,80]],Strategy:[[100,100,0],[0,0,100],[100,100,80]],Casual:[[0,100,0],[0,100,0],[0,50,100]]};
   const names=[['Engine','Gameplay','Story'],['Dialogues','Level Design','AI'],['World Design','Graphics','Sound']];
   $('sliderMatrix').innerHTML=`<thead><tr><th>Genre</th><th>Phase 1</th><th>Phase 2</th><th>Phase 3</th></tr></thead><tbody>${GENRES.map(g=>`<tr><td>${g}</td>${sliderRows[g].map((v,i)=>`<td title="${names[i].join(' / ')}">${v.join(' / ')}</td>`).join('')}</tr>`).join('')}</tbody>`;
-  const overrideRows=[];
-  Object.entries(REF.overrides).forEach(([topic,genres])=>Object.keys(genres).forEach(genre=>overrideRows.push(`<tr><td>${topic}</td><td>${genre}</td>${effectivePriority(topic,genre).map(v=>`<td class="${fitClass(normalizedFit(v))}">${Math.round(v*100)}%</td>`).join('')}</tr>`)));
-  $('overrideMatrix').innerHTML=`<thead><tr><th>Topic</th><th>Genre</th>${['Engine','Gameplay','Story','Dialogues','Level Design','AI','World Design','Graphics','Sound'].map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${overrideRows.join('')}</tbody>`;
+  const priorityRows=[];
+  defaultTopics.forEach(topic=>GENRES.forEach(genre=>priorityRows.push(`<tr><td>${topic}</td><td>${genre}</td>${prioritySlider(topic,genre).flat().map(v=>`<td>${v}%</td>`).join('')}</tr>`)));
+  $('priorityMatrix').innerHTML=`<thead><tr><th>Topic</th><th>Genre</th>${['Engine','Gameplay','Story','Dialogues','Level Design','AI','World Design','Graphics','Sound'].map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${priorityRows.join('')}</tbody>`;
 }
 function renderManager(){
   const topics=defaultTopics;
