@@ -135,13 +135,19 @@ function renderGenreOptions(){
   $('genreOptions').innerHTML=`<button class="genre-option ${value==='all'?'active':''}" data-genre="all">All</button>`+GENRES.map(g=>`<button class="genre-option ${value===g?'active':''}" data-genre="${g}">${g}</button>`).join('');
   document.querySelectorAll('#genreOptions [data-genre]').forEach(btn=>btn.addEventListener('click',()=>{$('genreFilter').value=btn.dataset.genre;renderGenreOptions();renderResults();}));
 }
+function resultDetails(game){
+  const slider=prioritySlider(game.topic,game.genre);
+  const checks=[['Topic × Genre',game.compat.topicGenre],['Topic × Audience',game.compat.topicAudience],['Platform × Genre',game.compat.platformGenre],['Platform × Audience',game.compat.platformAudience]];
+  return `<div class="result-details-content"><div class="detail-checks">${checks.map(([label,value])=>`<div class="detail-check"><span>${label}</span><b class="${fitClass(value)}">${fitLabel(value)}</b></div>`).join('')}</div><div class="detail-plan"><div class="detail-plan-heading"><span class="eyebrow">DEVELOPMENT PLAN</span><span>${game.size} · ${game.audience}</span></div><div class="detail-phases">${slider.map((values,index)=>`<div><strong>Phase ${index+1}</strong><span>${PHASE_LABELS[index].map((label,i)=>`${label} ${values[i]}%`).join(' · ')}</span></div>`).join('')}</div></div></div>`;
+}
 function renderResults(){
-  const platform = $('platformFilter').value, genre = $('genreFilter').value, sort = $('sortFilter').value;
+  const platform = $('platformFilter').value, genre = $('genreFilter').value, audience = $('audienceFilter').value, size = $('sizeFilter').value, sort = $('sortFilter').value;
   let rows=[];
-  selectedTopics.forEach(topic=>{GENRES.filter(g=>genre==='all'||g===genre).forEach(g=>{const score=scoreFor(topic,g,platform==='all'?'PC':platform);if(score)rows.push({topic,genre:g,score,platform:platform==='all'?'PC / recommended':platform, audience:TOPICS.find(x=>x[0]===topic&&x[1]===g)?.[3]||'Medium'});});});
-  rows.sort((a,b)=>sort==='alpha'?a.topic.localeCompare(b.topic):sort==='sales'?b.score-a.score+(b.audience==='High'?0.2:0):b.score-a.score);
+  selectedTopics.forEach(topic=>{GENRES.filter(g=>genre==='all'||g===genre).forEach(g=>{const game=buildGame(topic,g,platform,audience,size);if(game.score)rows.push(game);});});
+  rows.sort((a,b)=>sort==='alpha'?a.topic.localeCompare(b.topic):b.score-a.score);
   $('resultCount').textContent=rows.length;
-  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">Recommended audience: ${r.audience}</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.score.toFixed(1)} / 10</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
+  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">${r.size} game · ${r.audience} audience</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.score.toFixed(1)} / 10</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div><button type="button" class="result-toggle" aria-expanded="false">View breakdown <span>+</span></button><div class="result-details" hidden>${resultDetails(r)}</div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
+  document.querySelectorAll('.result-toggle').forEach(button=>button.addEventListener('click',()=>{const details=button.nextElementSibling;const open=details.hidden;details.hidden=!open;button.setAttribute('aria-expanded',String(open));button.innerHTML=open?'Hide breakdown <span>−</span>':'View breakdown <span>+</span>';}));
 }
 function renderReference(){
   const query=($('referenceSearch')?.value||'').toLowerCase();
@@ -166,7 +172,7 @@ function renderManager(){
 }
 function showView(view){document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));$(`${view}View`).classList.remove('hidden');document.querySelectorAll('.nav-link').forEach(n=>n.classList.toggle('active',n.dataset.view===view));}
 fillSelects();renderGenreOptions();renderChips();renderResults();renderManager();renderReference();
-$('topicSearch').addEventListener('input',renderChips);$('platformFilter').addEventListener('change',renderResults);$('genreFilter').addEventListener('change',renderResults);$('sortFilter').addEventListener('change',renderResults);
+$('topicSearch').addEventListener('input',renderChips);$('platformFilter').addEventListener('change',renderResults);$('genreFilter').addEventListener('change',renderResults);$('audienceFilter').addEventListener('change',renderResults);$('sizeFilter').addEventListener('change',renderResults);$('sortFilter').addEventListener('change',renderResults);
 $('genreFilter').addEventListener('change',renderGenreOptions);$('referenceSearch').addEventListener('input',renderReference);
 $('selectAll').addEventListener('click',()=>{selectedTopics=new Set(defaultTopics);persist();renderChips();renderResults();renderManager();});
 $('analyzeBtn').addEventListener('click',renderAnalysis);
