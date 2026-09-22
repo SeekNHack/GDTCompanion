@@ -129,7 +129,7 @@ function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify([...selecte
 function renderChips(){
   const query = $('topicSearch').value.toLowerCase();
   const unique = defaultTopics.filter(t=>t.toLowerCase().includes(query));
-  $('topicChips').innerHTML = unique.map(t=>`<button class="topic-choice ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="topic-choice-mark">${selectedTopics.has(t)?'✓':'+'}</span><span>${t}</span></button>`).join('');
+  $('topicChips').innerHTML = unique.map(t=>`<button type="button" aria-pressed="${selectedTopics.has(t)}" class="topic-choice ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="topic-choice-mark">${selectedTopics.has(t)?'✓':'+'}</span><span>${t}</span></button>`).join('');
   $('topicCount').textContent = `${selectedTopics.size} selected`;
   document.querySelectorAll('#topicChips [data-topic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTopics.has(btn.dataset.topic)?selectedTopics.delete(btn.dataset.topic):selectedTopics.add(btn.dataset.topic);persist();renderChips();renderResults();renderManager();}));
 }
@@ -178,6 +178,8 @@ fillSelects();renderGenreOptions();renderChips();renderResults();renderManager()
 $('topicSearch').addEventListener('input',renderChips);$('platformFilter').addEventListener('change',renderResults);$('genreFilter').addEventListener('change',renderResults);$('audienceFilter').addEventListener('change',renderResults);$('sizeFilter').addEventListener('change',renderResults);$('sortFilter').addEventListener('change',renderResults);
 $('genreFilter').addEventListener('change',renderGenreOptions);$('referenceSearch').addEventListener('input',renderReference);
 $('selectAll').addEventListener('click',()=>{selectedTopics=new Set(defaultTopics);persist();renderChips();renderResults();renderManager();});
+$('selectVisibleTopics').addEventListener('click',()=>{const query=$('topicSearch').value.toLowerCase();defaultTopics.filter(t=>t.toLowerCase().includes(query)).forEach(t=>selectedTopics.add(t));persist();renderChips();renderResults();renderManager();});
+$('clearTopics').addEventListener('click',()=>{selectedTopics=new Set();persist();renderChips();renderResults();renderManager();});
 $('analyzeBtn').addEventListener('click',renderAnalysis);
 $('resetBtn').addEventListener('click',()=>{$('topicSearch').value='';$('platformFilter').value='all';$('genreFilter').value='all';$('audienceFilter').value='Everyone';$('sizeFilter').value='Small';$('sortFilter').value='score';selectedTopics=new Set(defaultTopics);persist();renderGenreOptions();renderChips();renderResults();renderManager();$('analysisResult').classList.add('hidden');});
 document.querySelectorAll('.nav-link').forEach(n=>n.addEventListener('click',()=>{showView(n.dataset.view);if(n.dataset.view==='reference')renderReference();}));

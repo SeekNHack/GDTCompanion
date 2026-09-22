@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260922-5" />
+    <link rel="stylesheet" href="styles.css?v=20260922-6" />
   </head>
   <body>
     <div class="shell">
@@ -43,7 +43,7 @@
             <div class="builder-progress"><span class="progress-step active"><b>01</b> Your topics</span><i></i><span class="progress-step"><b>02</b> Game setup</span><i></i><span class="progress-step"><b>03</b> Game plan</span></div>
             <div class="panel-heading"><div><span class="eyebrow">01 / YOUR TOPICS</span><h3>What have you unlocked?</h3></div><button class="text-button" id="selectAll">Select all topics</button></div>
             <div class="controls-grid">
-              <div class="field field-wide"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search a topic..." /></div><div id="topicChips" class="chip-list"></div></div>
+              <div class="field field-wide topic-picker"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input topic-search"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search your unlocked topics..." /></div><div class="topic-actions"><button type="button" id="selectVisibleTopics">Select visible</button><button type="button" id="clearTopics">Clear all</button><span>Tap a topic to toggle it</span></div><div id="topicChips" class="chip-list"></div></div>
               <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Choose the primary genre for your game.</p></div>
               <div class="field"><label for="platformFilter">PLATFORM</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Choose a console to score the plan.</p></div>
               <div class="field"><label for="audienceFilter">TARGET AUDIENCE</label><select id="audienceFilter"><option>Everyone</option><option>Young</option><option>Mature</option></select><p class="field-hint">Topic and platform fit changes by audience.</p></div>
@@ -89,6 +89,6 @@
       </main>
     </div>
     <script src="data.js?v=20260922-2"></script>
-    <script src="app.js?v=20260922-5"></script>
+    <script src="app.js?v=20260922-6"></script>
   </body>
 </html>
