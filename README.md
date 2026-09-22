@@ -4,6 +4,14 @@ Static planner for finding topic / genre / platform combinations for **Game Dev 
 
 The app includes a **Game guide** section covering the four compatibility checks, research priorities, slider starting points, repetition penalties, game-size multipliers, staff scaling, G3 timing, AAA, MMO and custom hardware.
 
+## Use the webapp
+
+You can use the live webapp directly from GitHub Pages:
+
+**[Open GDT Companion](https://seeknhack.github.io/GDTCompanion/)**
+
+No installation or download is required.
+
 ## Deploy su GitHub Pages
 
 The project has no build step or dependencies. Publish the `main` branch with the `/ (root)` folder selected under **Settings → Pages → Deploy from a branch**. GitHub Pages will serve `index.html` directly.
