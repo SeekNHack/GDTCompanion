@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A planner for finding the best topic, genre, and platform combinations in Game Dev Tycoon." />
+    <title>DevDeck — Game Dev Tycoon planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-mark">✦</span><span>DevDeck</span></div>
+        <p class="brand-subtitle">GAME DEV TYCOON<br />COMBINATION LAB</p>
+        <nav>
+          <button class="nav-link active" data-view="planner"><span>⌘</span> Planner</button>
+          <button class="nav-link" data-view="topics"><span>◈</span> My topics</button>
+          <button class="nav-link" data-view="guide"><span>▤</span> Game guide</button>
+          <button class="nav-link" data-view="about"><span>ⓘ</span> Method</button>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="status-dot"><i></i> OFFLINE DATA</div>
+          <small>v0.1 · base 1.6.11</small>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div><span class="eyebrow">COMBINATION LAB / 01</span><h1>Find your next hit.</h1></div>
+          <div class="top-actions"><button class="icon-button" id="resetBtn" title="Reset filters">↺</button><div class="avatar">GD</div></div>
+        </header>
+
+        <section id="plannerView" class="view">
+          <div class="hero-card">
+            <div><p class="eyebrow accent">SMART SEARCH</p><h2>What game are we<br /><em>making today?</em></h2><p class="hero-copy">Select the topics you have unlocked and let the planner rank the most promising combinations.</p></div>
+            <div class="hero-orbit"><span>TOPIC</span><b>+</b><span>GENRE</span><b>+</b><span>PLATFORM</span></div>
+          </div>
+
+          <section class="control-panel">
+            <div class="panel-heading"><div><span class="eyebrow">01 / INPUT</span><h3>Configure your search</h3></div><button class="text-button" id="selectAll">Select all topics</button></div>
+            <div class="controls-grid">
+              <div class="field field-wide"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search a topic..." /></div><div id="topicChips" class="chip-list"></div></div>
+              <div class="field"><label for="platformFilter">PLATFORM OF INTEREST</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Filter by platform, or compare them all.</p></div>
+              <div class="field"><label for="genreFilter">GENRE</label><select id="genreFilter"><option value="all">All genres</option></select><p class="field-hint">Show one preferred genre only.</p></div>
+            </div>
+          </section>
+
+          <section class="results-section"><div class="results-heading"><div><span class="eyebrow">02 / OUTPUT</span><h3>Recommended combinations <span id="resultCount" class="count-pill">0</span></h3></div><label class="sort-control">SORT BY <select id="sortFilter"><option value="score">Compatibility</option><option value="sales">Sales potential</option><option value="alpha">Topic name</option></select></label></div><div id="results" class="results-grid"></div></section>
+        </section>
+
+        <section id="topicsView" class="view hidden"><div class="page-intro"><span class="eyebrow">COLLECTION</span><h2>My topics</h2><p>Toggle the topics available in your current game. Your preferences are saved automatically in this browser.</p></div><div id="topicManager" class="topic-manager"></div></section>
+        <section id="guideView" class="view hidden">
+          <div class="page-intro"><span class="eyebrow">FIELD MANUAL / 1.7.8</span><h2>Play smarter, not louder.</h2><p>A practical reference for the decisions the combination planner cannot make on its own. Use it alongside the ranking, not as a promise of a guaranteed 10/10.</p></div>
+          <div class="guide-grid">
+            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◎</span><span class="guide-label">THE FOUR CHECKS</span></div><h3>Start from compatibility</h3><p>Review the four relationships before committing to a game. Prefer <strong>+++</strong> wherever possible; avoid <strong>---</strong> and be cautious with <strong>--</strong>.</p><div class="compat-grid"><span>Topic × Genre<small>Great / Good / Okay</small></span><span>Topic × Audience<small>Most impactful pair</small></span><span>Platform × Genre<small>Must not be bad</small></span><span>Platform × Audience<small>Reach and sales</small></span></div></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">↗</span><span class="guide-label">NEXT MOVE</span></div><h3>What should I make next?</h3><ol class="guide-list"><li>Make a sequel when the previous game is old enough and you have a newer engine.</li><li>Take a publishing deal only when its compatibility is not a trap.</li><li>Otherwise make a new game your fanbase can support.</li></ol></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">▦</span><span class="guide-label">RESEARCH ORDER</span></div><h3>Spend research points well</h3><p>Prioritize unique unlocks such as Medium Games, Casual, audiences and better graphics. Rebuild your custom engine whenever a better graphics level is available.</p><div class="mini-sequence"><b>Graphics</b><i>→</i><b>Engine</b><i>→</i><b>Topics</b><i>→</i><b>Features</b></div></article>
+            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◒</span><span class="guide-label">SLIDER STARTING POINTS</span></div><h3>Genre focus by development phase</h3><p class="muted-copy">These are practical presets for the base game. Exact percentages can shift with game size, graphics features, employee skills and the topic. Every row is ordered as the three sliders shown in that phase.</p><div class="slider-table"><div class="slider-row slider-head"><span>Genre</span><span>Phase 1</span><span>Phase 2</span><span>Phase 3</span></div><div class="slider-row"><b>Action</b><span>100 / 80 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Adventure</b><span>0 / 80 / 100</span><span>100 / 0 / 0</span><span>100 / 80 / 0</span></div><div class="slider-row"><b>RPG</b><span>0 / 80 / 100</span><span>100 / 80 / 0</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Strategy</b><span>100 / 100 / 0</span><span>0 / 0 / 100</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Simulation</b><span>80 / 100 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Casual</b><span>0 / 100 / 0</span><span>0 / 100 / 0</span><span>0 / 50 / 100</span></div></div></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">↺</span><span class="guide-label">QUALITY LOOP</span></div><h3>Do not repeat blindly</h3><p>Repeating the exact same topic + genre can reduce review scores. Rotate between strong pairs, and use new topics and combinations to gain experience and unlock research faster.</p><div class="callout">Change the pair, not necessarily the genre.</div></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">◌</span><span class="guide-label">TEAM & SCALE</span></div><h3>Respect the game size</h3><p>Medium, Large and AAA games need increasingly higher T/D output. Train specialists for AAA, keep workloads under control, and use the strongest graphics your engine supports.</p><div class="scale-list"><span>Small <b>1.0×</b></span><span>Medium <b>1.2×</b></span><span>Large <b>1.4×</b></span><span>AAA <b>1.8×</b></span></div></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">≈</span><span class="guide-label">REVIEW ENGINE</span></div><h3>Protect your future score</h3><p>Reviews are compared with your own Target High Score. Do not inflate it too quickly with unnecessary features: a steady run just above the 9 breakpoint is often safer than chasing a perfect 10 every time.</p><div class="callout">Your last best game changes the difficulty of the next one.</div></article>
+            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">⊕</span><span class="guide-label">MIXED GAMES</span></div><h3>Mix with a plan</h3><p>For multi-genre games, the first genre carries more weight than the second. For multi-platform games, choose the strongest platform first; extra reach can be worth a small review trade-off.</p><div class="mini-sequence"><b>Best fit</b><i>→</i><b>Second fit</b><i>→</i><b>More market share</b></div></article>
+            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◷</span><span class="guide-label">LATE GAME</span></div><h3>Large, AAA and MMO checklist</h3><div class="check-grid"><p>✓ Large games: keep making Medium games until your fanbase and team can support the jump.</p><p>✓ AAA: use at least 3D Graphics V5 and three specialists in important design aspects.</p><p>✓ MMO: use an MMO Support engine and a +++ topic/genre pair.</p><p>✓ Expansions: wait at least 40 weeks between releases to avoid the major quality hit.</p><p>✓ G3: time development so phase 2 overlaps the June convention boost.</p><p>✓ Custom hardware: keep your console tech level aligned with the current generation.</p></div></article>
+          </div>
+        </section>
+        <section id="aboutView" class="view hidden"><div class="page-intro"><span class="eyebrow">HOW IT WORKS</span><h2>The method, no magic.</h2><p>DevDeck provides a practical ranking, not an exact score prediction: in-game results also depend on sliders, design/tech points, audience, game size, freshness and your current Target High Score.</p></div><div class="method-grid"><article><span class="method-number">01</span><h3>Topic × genre</h3><p>The primary compatibility, from “Great” to “Bad”, carries the most weight.</p></article><article><span class="method-number">02</span><h3>Genre × platform</h3><p>Some platforms naturally favor certain genres; this filter helps narrow the field.</p></article><article><span class="method-number">03</span><h3>A signal, not a prophecy</h3><p>Use the ranking as a starting point for deciding what to develop next.</p></article></div><div class="sources"><h3>Sources consulted</h3><p>The guide was cross-checked against the <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild updated for 1.7.8</a>, the <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">1.7.8 community guide</a>, its <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oged1p/simpleish_guide_for_178_expanded_part_2/" target="_blank" rel="noreferrer">part 2</a>, <a href="https://www.reddit.com/r/GameDevTycoon/comments/1otq1e4/simpleish_guide_for_178_expanded_part_3/" target="_blank" rel="noreferrer">part 3</a>, and the open-source <a href="https://github.com/reiswaffel78/Game-Dev-Tycoon-advicer" target="_blank" rel="noreferrer">Game-Dev-Tycoon-advicer</a>. The dataset is curated for the base game and can be expanded.</p></div></section>
+        <footer class="site-footer">
+          <div><span class="eyebrow">REFERENCE DESK</span><p>DevDeck is a fan-made helper for Game Dev Tycoon. Game data and strategy notes are based on the sources below.</p></div>
+          <div class="footer-links"><a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild · 1.7.8</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">Community guide · part 1</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1oged1p/simpleish_guide_for_178_expanded_part_2/" target="_blank" rel="noreferrer">Community guide · part 2</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1otq1e4/simpleish_guide_for_178_expanded_part_3/" target="_blank" rel="noreferrer">Community guide · part 3</a><a href="https://github.com/reiswaffel78/Game-Dev-Tycoon-advicer" target="_blank" rel="noreferrer">Game-Dev-Tycoon-advicer</a></div>
+          <small>Sources are credited for reference; DevDeck is not affiliated with Greenheart Games.</small>
+        </footer>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
