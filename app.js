@@ -3,6 +3,10 @@ const TOPICS = [
 ];
 const PLATFORMS = [['PC','PC',9],['G64','G64',7],['TES','TES',8],['Master V','Master V',6],['Game Link','Game Link',8],['Vena Gear','Vena Gear',7],['DreamVast','DreamVast',8],['PlaySystem','PlaySystem',9],['MBox','MBox',9],['GS','GS',8],['Playsystem 2','Playsystem 2',9],['MBox 360','MBox 360',9],['Nuu','Nuu',8],['Vena Gear Next','Vena Gear Next',8],['GameSphere','GameSphere',8],['PlaySystem 3','PlaySystem 3',9],['MBox One','MBox One',9]];
 const GENRES = ['Action','Adventure','RPG','Simulation','Strategy','Casual'];
+const AUDIENCES = ['Everyone','Young','Mature'];
+const GAME_SIZES = ['Small','Medium','Large','AAA'];
+const SLIDER_VALUES = {Action:[[100,80,0],[0,80,100],[0,100,80]],Adventure:[[0,80,100],[100,0,0],[100,80,0]],RPG:[[0,80,100],[100,80,0],[100,100,80]],Simulation:[[80,100,0],[0,80,100],[0,100,80]],Strategy:[[100,100,0],[0,0,100],[100,100,80]],Casual:[[0,100,0],[0,100,0],[0,50,100]]};
+const PHASE_LABELS = [['Engine','Gameplay','Story / Quests'],['Dialogues','Level Design','AI'],['World Design','Graphics','Sound']];
 const STORAGE_KEY = 'devdeck-topics-v1';
 const defaultTopics = [...new Set(TOPICS.map(x=>x[0]))];
 let selectedTopics = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(defaultTopics)));
@@ -49,9 +53,40 @@ function scoreFor(topic, genre, platform){
   const synergy = 5.2 + fit*1.05 + platformScore*.22 + genreWeight*.25;
   return Math.min(10,Math.max(5,Math.round(synergy*10)/10));
 }
+function buildGame(topic,genre,platform,audience,size){
+  const topicGenre=fitFor(topic,genre);
+  const topicAudience=audienceFit(topic,audience);
+  const platformGenre=platform==='all'?2:platformScoreForGenre(platform,genre);
+  const platformAudience=platform==='all'?2:platformAudienceFit(platform,audience);
+  const sizeMultiplier={Small:1,Medium:1.2,Large:1.4,AAA:1.8}[size]||1;
+  const raw=((topicGenre*0.33)+(topicAudience*0.28)+(platformGenre*0.24)+(platformAudience*0.15))/3*10;
+  const score=Math.min(10,Math.max(0,Math.round((raw + (platform==='all'?0.3:0) - (sizeMultiplier-1)*0.2)*10)/10));
+  return {topic,genre,platform:platform==='all'?'PC / recommended':platform,audience,size,score,compat:{topicGenre,topicAudience,platformGenre,platformAudience}};
+}
+function platformScoreForGenre(platform,genre){
+  const strong=['Action','Adventure','RPG'];
+  const p=PLATFORMS.find(x=>x[0]===platform);
+  if(!p) return 1;
+  return p[2]>=9?(strong.includes(genre)?3:2):p[2]>=8?(strong.includes(genre)?2:1):1;
+}
+function renderAnalysis(){
+  const topicCandidates=[...selectedTopics];
+  if(!topicCandidates.length){$('analysisResult').classList.remove('hidden');$('analysisResult').innerHTML='<div class="analysis-empty"><strong>Select at least one topic first.</strong><span>Go back to Your topics and choose the topics available in your game.</span></div>';return;}
+  const platform=$('platformFilter').value, audience=$('audienceFilter').value, size=$('sizeFilter').value, selectedGenre=$('genreFilter').value;
+  const candidates=[];
+  topicCandidates.forEach(topic=>{(selectedGenre==='all'?GENRES:[selectedGenre]).forEach(genre=>candidates.push(buildGame(topic,genre,platform,audience,size)));});
+  candidates.sort((a,b)=>b.score-a.score);
+  const result=candidates[0];
+  const slider=SLIDER_VALUES[result.genre];
+  $('analysisResult').classList.remove('hidden');
+  $('analysisResult').innerHTML=`<div class="analysis-header"><div><span class="eyebrow">03 / GAME PLAN</span><h2>${result.topic} <em>×</em> ${result.genre}</h2><p>${result.size} game · ${result.platform} · ${result.audience} audience</p></div><div class="analysis-score"><span>ESTIMATED FIT</span><strong>${result.score.toFixed(1)}</strong><small>/ 10</small></div></div><div class="analysis-body"><div class="compatibility-panel"><div class="subheading"><span class="eyebrow">COMPATIBILITY BREAKDOWN</span><span class="legend">+++ best · --- avoid</span></div>${[['Topic × Genre',result.compat.topicGenre],['Topic × Audience',result.compat.topicAudience],['Platform × Genre',result.compat.platformGenre],['Platform × Audience',result.compat.platformAudience]].map(x=>`<div class="compatibility-line"><span>${x[0]}</span><b class="fit-${x[1]>=3?'3':x[1]===2?'2':x[1]===1?'1':x[1]===0?'0':'neg'}">${fitLabel(x[1])}</b><i><em style="width:${Math.max(8,(x[1]+1)*25)}%"></em></i></div>`).join('')}</div><div class="why-panel"><span class="eyebrow">WHY THIS PICK</span><h3>${result.score>=8?'Strong setup':'Best available setup'}</h3><p>The planner selected the highest-scoring topic from your available topics for this setup. Use the phase plan as a starting preset and keep the game’s graphics, staff skills and current high score in mind.</p><button class="text-button" id="showAllPlans">Compare all matching topics →</button></div></div><div class="phase-plan"><div class="subheading"><div><span class="eyebrow">DEVELOPMENT PHASES</span><h3>Slider starting points</h3></div><span class="legend">${result.genre} preset · ${result.size} game</span></div><div class="phase-cards">${slider.map((values,index)=>`<div class="phase-plan-card"><span class="eyebrow">PHASE ${index+1}</span>${PHASE_LABELS[index].map((label,i)=>`<div class="phase-row"><span>${label}</span><div><i style="width:${values[i]}%"></i></div><b>${values[i]}%</b></div>`).join('')}</div>`).join('')}</div><small class="plan-disclaimer">Presets are directional. Topic overrides, graphics features, employee specialisation, bugs and the Target High Score can change the final result.</small></div>`;
+  $('showAllPlans').addEventListener('click',()=>{$('results').scrollIntoView({behavior:'smooth',block:'start'});});
+}
 function fillSelects(){
   $('platformFilter').innerHTML = '<option value="all">All platforms</option>' + PLATFORMS.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
   $('genreFilter').innerHTML = '<option value="all">All genres</option>' + GENRES.map(g=>`<option value="${g}">${g}</option>`).join('');
+  $('audienceFilter').innerHTML = AUDIENCES.map(a=>`<option value="${a}">${a}</option>`).join('');
+  $('sizeFilter').innerHTML = GAME_SIZES.map(s=>`<option value="${s}">${s} game</option>`).join('');
 }
 function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedTopics])); }
 function renderChips(){
@@ -98,5 +133,6 @@ fillSelects();renderGenreOptions();renderChips();renderResults();renderManager()
 $('topicSearch').addEventListener('input',renderChips);$('platformFilter').addEventListener('change',renderResults);$('genreFilter').addEventListener('change',renderResults);$('sortFilter').addEventListener('change',renderResults);
 $('genreFilter').addEventListener('change',renderGenreOptions);$('referenceSearch').addEventListener('input',renderReference);
 $('selectAll').addEventListener('click',()=>{selectedTopics=new Set(defaultTopics);persist();renderChips();renderResults();renderManager();});
-  $('resetBtn').addEventListener('click',()=>{$('topicSearch').value='';$('platformFilter').value='all';$('genreFilter').value='all';$('sortFilter').value='score';selectedTopics=new Set(defaultTopics);persist();renderGenreOptions();renderChips();renderResults();renderManager();});
+$('analyzeBtn').addEventListener('click',renderAnalysis);
+$('resetBtn').addEventListener('click',()=>{$('topicSearch').value='';$('platformFilter').value='all';$('genreFilter').value='all';$('audienceFilter').value='Everyone';$('sizeFilter').value='Small';$('sortFilter').value='score';selectedTopics=new Set(defaultTopics);persist();renderGenreOptions();renderChips();renderResults();renderManager();$('analysisResult').classList.add('hidden');});
 document.querySelectorAll('.nav-link').forEach(n=>n.addEventListener('click',()=>{showView(n.dataset.view);if(n.dataset.view==='reference')renderReference();}));

@@ -36,20 +36,25 @@
 
         <section id="plannerView" class="view">
           <div class="hero-card">
-            <div><p class="eyebrow accent">SMART SEARCH</p><h2>What game are we<br /><em>making today?</em></h2><p class="hero-copy">Select the topics you have unlocked and let the planner rank the most promising combinations.</p></div>
+            <div><p class="eyebrow accent">CREATE A GAME</p><h2>What game are we<br /><em>making today?</em></h2><p class="hero-copy">Walk through the choices, then get a compatibility score and a phase-by-phase development plan.</p></div>
             <div class="hero-orbit"><span>TOPIC</span><b>+</b><span>GENRE</span><b>+</b><span>PLATFORM</span></div>
           </div>
 
           <section class="control-panel">
-            <div class="panel-heading"><div><span class="eyebrow">01 / INPUT</span><h3>Configure your search</h3></div><button class="text-button" id="selectAll">Select all topics</button></div>
+            <div class="builder-progress"><span class="progress-step active"><b>01</b> Your topics</span><i></i><span class="progress-step"><b>02</b> Game setup</span><i></i><span class="progress-step"><b>03</b> Game plan</span></div>
+            <div class="panel-heading"><div><span class="eyebrow">01 / YOUR TOPICS</span><h3>What have you unlocked?</h3></div><button class="text-button" id="selectAll">Select all topics</button></div>
             <div class="controls-grid">
               <div class="field field-wide"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search a topic..." /></div><div id="topicChips" class="chip-list"></div></div>
-              <div class="field"><label for="platformFilter">PLATFORM OF INTEREST</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Filter by platform, or compare them all.</p></div>
-              <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Pick one genre to narrow the results.</p></div>
+              <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Choose the primary genre for your game.</p></div>
+              <div class="field"><label for="platformFilter">PLATFORM</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Choose a console to score the plan.</p></div>
+              <div class="field"><label for="audienceFilter">TARGET AUDIENCE</label><select id="audienceFilter"><option>Everyone</option><option>Young</option><option>Mature</option></select><p class="field-hint">Topic and platform fit changes by audience.</p></div>
+              <div class="field"><label for="sizeFilter">GAME SIZE</label><select id="sizeFilter"><option>Small</option><option>Medium</option><option>Large</option><option>AAA</option></select><p class="field-hint">Larger games need more T/D output.</p></div>
             </div>
+            <div class="builder-action"><span><strong>Ready to build?</strong><small>We will score every selected topic against this setup.</small></span><button class="primary-button" id="analyzeBtn">Analyze game <b>→</b></button></div>
           </section>
 
-          <section class="results-section"><div class="results-heading"><div><span class="eyebrow">02 / OUTPUT</span><h3>Recommended combinations <span id="resultCount" class="count-pill">0</span></h3></div><label class="sort-control">SORT BY <select id="sortFilter"><option value="score">Compatibility</option><option value="sales">Sales potential</option><option value="alpha">Topic name</option></select></label></div><div id="results" class="results-grid"></div></section>
+          <section id="analysisResult" class="analysis-result hidden"></section>
+          <section class="results-section"><div class="results-heading"><div><span class="eyebrow">OPTIONAL SHORTLIST</span><h3>Recommended combinations <span id="resultCount" class="count-pill">0</span></h3></div><label class="sort-control">SORT BY <select id="sortFilter"><option value="score">Compatibility</option><option value="sales">Sales potential</option><option value="alpha">Topic name</option></select></label></div><div id="results" class="results-grid"></div></section>
         </section>
 
         <section id="topicsView" class="view hidden"><div class="page-intro"><span class="eyebrow">COLLECTION</span><h2>My topics</h2><p>Toggle the topics available in your current game. Your preferences are saved automatically in this browser.</p></div><div id="topicManager" class="topic-manager"></div></section>
