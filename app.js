@@ -57,7 +57,7 @@ function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify([...selecte
 function renderChips(){
   const query = $('topicSearch').value.toLowerCase();
   const unique = [...new Set(TOPICS.map(x=>x[0]))].filter(t=>t.toLowerCase().includes(query));
-  $('topicChips').innerHTML = unique.map(t=>`<button class="chip ${selectedTopics.has(t)?'selected':''}" data-topic="${t}">${t}</button>`).join('');
+  $('topicChips').innerHTML = unique.map(t=>`<button class="topic-choice ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="topic-choice-mark">${selectedTopics.has(t)?'✓':'+'}</span><span>${t}</span></button>`).join('');
   $('topicCount').textContent = `${selectedTopics.size} selected`;
   document.querySelectorAll('#topicChips [data-topic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTopics.has(btn.dataset.topic)?selectedTopics.delete(btn.dataset.topic):selectedTopics.add(btn.dataset.topic);persist();renderChips();renderResults();renderManager();}));
 }
@@ -88,8 +88,10 @@ function renderReference(){
 }
 function renderManager(){
   const topics=[...new Set(TOPICS.map(x=>x[0]))];
-  $('topicManager').innerHTML=topics.map(t=>`<div class="manager-item"><label for="m-${t}">${t}</label><input id="m-${t}" type="checkbox" data-topic="${t}" ${selectedTopics.has(t)?'checked':''}></div>`).join('');
-  document.querySelectorAll('#topicManager [data-topic]').forEach(i=>i.addEventListener('change',()=>{i.checked?selectedTopics.add(i.dataset.topic):selectedTopics.delete(i.dataset.topic);persist();renderChips();renderResults();renderManager();}));
+  $('topicManager').innerHTML=`<div class="manager-toolbar"><div><span class="eyebrow">TOPIC COLLECTION</span><strong>${selectedTopics.size} of ${topics.length} active</strong></div><div class="manager-actions"><button class="manager-action" id="managerSelectAll">Select all</button><button class="manager-action muted-action" id="managerClearAll">Clear all</button></div></div><div class="manager-grid">${topics.map((t,i)=>`<button class="manager-item ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="manager-index">${String(i+1).padStart(2,'0')}</span><span class="manager-name">${t}</span><span class="manager-state">${selectedTopics.has(t)?'✓':''}</span></button>`).join('')}</div>`;
+  document.querySelectorAll('#topicManager .manager-item').forEach(item=>item.addEventListener('click',()=>{selectedTopics.has(item.dataset.topic)?selectedTopics.delete(item.dataset.topic):selectedTopics.add(item.dataset.topic);persist();renderChips();renderResults();renderManager();}));
+  $('managerSelectAll').addEventListener('click',()=>{selectedTopics=new Set(defaultTopics);persist();renderChips();renderResults();renderManager();});
+  $('managerClearAll').addEventListener('click',()=>{selectedTopics=new Set();persist();renderChips();renderResults();renderManager();});
 }
 function showView(view){document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));$(`${view}View`).classList.remove('hidden');document.querySelectorAll('.nav-link').forEach(n=>n.classList.toggle('active',n.dataset.view===view));}
 fillSelects();renderGenreOptions();renderChips();renderResults();renderManager();renderReference();
