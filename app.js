@@ -39,6 +39,8 @@ function fitFor(topic,genre){
   return -1;
 }
 function normalizedFit(value){return value>=.95?3:value>=.85?2:value>=.75?1:value>=.65?0:-1;}
+function fitPoints(value){return ({3:100,2:80,1:60,0:30,'-1':0})[value] ?? 0;}
+function scoreClass(value){return value>=80?'score-good':value>=60?'score-ok':value>=30?'score-low':'score-bad';}
 function effectivePriority(topic,genre){
   const base=REF.basePriorities?.[genre] || Array(9).fill(.8);
   const adjustment=REF.adjustments?.[topic]?.[genre];
@@ -89,9 +91,10 @@ function buildGame(topic,genre,platform,audience,size){
   const platformGenre=platform==='all'?2:platformScoreForGenre(platform,genre);
   const platformAudience=platform==='all'?2:platformAudienceFit(platform,audience);
   const sizeMultiplier={Small:1,Medium:1.2,Large:1.4,AAA:1.8}[size]||1;
-  const raw=((topicGenre*0.33)+(topicAudience*0.28)+(platformGenre*0.24)+(platformAudience*0.15))/3*10;
-  const score=Math.min(10,Math.max(0,Math.round((raw + (platform==='all'?0.3:0) - (sizeMultiplier-1)*0.2)*10)/10));
-  return {topic,genre,platform:platform==='all'?'PC / recommended':platform,audience,size,score,compat:{topicGenre,topicAudience,platformGenre,platformAudience}};
+  const breakdown={topicGenre:fitPoints(topicGenre),platformGenre:fitPoints(platformGenre),topicAudience:fitPoints(topicAudience),platformAudience:fitPoints(platformAudience)};
+  const totalScore=breakdown.topicGenre+breakdown.platformGenre+breakdown.topicAudience+breakdown.platformAudience;
+  const score=Math.round(totalScore/40*10)/10;
+  return {topic,genre,platform:platform==='all'?'All platforms':platform,audience,size,score,totalScore,sizeMultiplier,compat:{topicGenre,topicAudience,platformGenre,platformAudience},breakdown};
 }
 function platformScoreForGenre(platform,genre){
   const row=REF_PLATFORM_BY_NAME.get(canonicalPlatform(platform));
@@ -137,16 +140,16 @@ function renderGenreOptions(){
 }
 function resultDetails(game){
   const slider=prioritySlider(game.topic,game.genre);
-  const checks=[['Topic × Genre',game.compat.topicGenre],['Topic × Audience',game.compat.topicAudience],['Platform × Genre',game.compat.platformGenre],['Platform × Audience',game.compat.platformAudience]];
-  return `<div class="result-details-content"><div class="detail-checks">${checks.map(([label,value])=>`<div class="detail-check"><span>${label}</span><b class="${fitClass(value)}">${fitLabel(value)}</b></div>`).join('')}</div><div class="detail-plan"><div class="detail-plan-heading"><span class="eyebrow">DEVELOPMENT PLAN</span><span>${game.size} · ${game.audience}</span></div><div class="detail-phases">${slider.map((values,index)=>`<div><strong>Phase ${index+1}</strong><span>${PHASE_LABELS[index].map((label,i)=>`${label} ${values[i]}%`).join(' · ')}</span></div>`).join('')}</div></div></div>`;
+  const checks=[['Topic × Genre',game.compat.topicGenre,game.breakdown.topicGenre],['Genre × Platform',game.compat.platformGenre,game.breakdown.platformGenre],['Topic × Audience',game.compat.topicAudience,game.breakdown.topicAudience],['Platform × Audience',game.compat.platformAudience,game.breakdown.platformAudience]];
+  return `<div class="result-details-content"><div class="detail-score-head"><div><span class="eyebrow">TOTAL COMPATIBILITY</span><strong>${game.totalScore} <small>/ 400</small></strong></div><span class="detail-score-grade ${scoreClass(game.score*10)}">${game.score.toFixed(1)} / 10</span></div><div class="detail-checks">${checks.map(([label,value,points])=>`<div class="detail-check"><div class="detail-check-label"><span>${label}</span><b class="${fitClass(value)}">${fitLabel(value)}</b></div><div class="detail-score-bar"><i class="${scoreClass(points)}" style="width:${points}%"></i></div><strong>${points}<small> pts</small></strong></div>`).join('')}</div><div class="detail-plan"><div class="detail-plan-heading"><span class="eyebrow">DEVELOPMENT PLAN</span><span>${game.size} · ${game.audience}</span></div><div class="detail-phases">${slider.map((values,index)=>`<div><strong>Phase ${index+1}</strong><span>${PHASE_LABELS[index].map((label,i)=>`<em><b>${label}</b><i><u style="width:${values[i]}%"></u></i>${values[i]}%</em>`).join('')}</span></div>`).join('')}</div></div></div>`;
 }
 function renderResults(){
   const platform = $('platformFilter').value, genre = $('genreFilter').value, audience = $('audienceFilter').value, size = $('sizeFilter').value, sort = $('sortFilter').value;
   let rows=[];
   selectedTopics.forEach(topic=>{GENRES.filter(g=>genre==='all'||g===genre).forEach(g=>{const game=buildGame(topic,g,platform,audience,size);if(game.score)rows.push(game);});});
-  rows.sort((a,b)=>sort==='alpha'?a.topic.localeCompare(b.topic):b.score-a.score);
+  rows.sort((a,b)=>sort==='alpha'?a.topic.localeCompare(b.topic):b.totalScore-a.totalScore);
   $('resultCount').textContent=rows.length;
-  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">${r.size} game · ${r.audience} audience</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.score.toFixed(1)} / 10</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div><button type="button" class="result-toggle" aria-expanded="false">View breakdown <span>+</span></button><div class="result-details" hidden>${resultDetails(r)}</div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
+  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">${r.size} game · ${r.audience} audience</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.totalScore} / 400</span></div><div class="result-score-label"><strong>${r.score.toFixed(1)} / 10</strong><span>combined fit score</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div><button type="button" class="result-toggle" aria-expanded="false">View score breakdown <span>+</span></button><div class="result-details" hidden>${resultDetails(r)}</div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
   document.querySelectorAll('.result-toggle').forEach(button=>button.addEventListener('click',()=>{const details=button.nextElementSibling;const open=details.hidden;details.hidden=!open;button.setAttribute('aria-expanded',String(open));button.innerHTML=open?'Hide breakdown <span>−</span>':'View breakdown <span>+</span>';}));
 }
 function renderReference(){
