@@ -8,10 +8,18 @@ const GAME_SIZES = ['Small','Medium','Large','AAA'];
 const SLIDER_VALUES = {Action:[[100,80,0],[0,80,100],[0,100,80]],Adventure:[[0,80,100],[100,0,0],[100,80,0]],RPG:[[0,80,100],[100,80,0],[100,100,80]],Simulation:[[80,100,0],[0,80,100],[0,100,80]],Strategy:[[100,100,0],[0,0,100],[100,100,80]],Casual:[[0,100,0],[0,100,0],[0,50,100]]};
 const PHASE_LABELS = [['Engine','Gameplay','Story / Quests'],['Dialogues','Level Design','AI'],['World Design','Graphics','Sound']];
 const STORAGE_KEY = 'devdeck-topics-v1';
-const defaultTopics = [...new Set(TOPICS.map(x=>x[0]))];
-let selectedTopics = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || JSON.stringify(defaultTopics)));
-
 const $ = id => document.getElementById(id);
+const REF = window.GDT_REFERENCE || {genres:GENRES, audiences:['Young','Everyone','Mature'], topics:[], platforms:[], overrides:{}};
+const REF_GENRES = REF.genres;
+const REF_TOPIC_BY_NAME = new Map(REF.topics.map(row=>[row[0],row]));
+const REF_PLATFORM_BY_NAME = new Map(REF.platforms.map(row=>[row[0],row]));
+const ALIASES = {'Pirates':'Pirate','Post-Apocalyptic':'Post Apocalyptic','Airport':'Airplane','G64':'Govodore 64','GameSphere':'Game Sphere','MBox 360':'mBox 360','MBox':'mBox','PlaySystem':'Playsystem','PlaySystem 3':'Playsystem 3','Vena Gear Next':'Vena Oasis'};
+const canonicalTopic = topic => ALIASES[topic] || topic;
+const canonicalPlatform = platform => ALIASES[platform] || platform;
+const defaultTopics = [...new Set((REF.topics.length ? REF.topics.map(row=>row[0]) : TOPICS.map(x=>x[0])))];
+const storedTopics = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+let selectedTopics = new Set((storedTopics || defaultTopics).map(canonicalTopic).filter(topic=>defaultTopics.includes(topic)));
+if(!storedTopics) localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedTopics]));
 const GREAT_TOPICS = {
   Action:['Post-Apocalyptic','Military','Aliens','Robots','Cyberpunk','Ninja','Martial Arts','Zombies'],
   Adventure:['Pirates','Detective','Horror','Time Travel','Wild West','History'],
@@ -21,15 +29,34 @@ const GREAT_TOPICS = {
   Casual:['School','Romance','Comedy','Music','Fashion','Cooking','Virtual Pet','Card Game','Life']
 };
 function fitFor(topic,genre){
+  const row=REF_TOPIC_BY_NAME.get(canonicalTopic(topic));
+  const exactIndex=REF_GENRES.indexOf(genre);
+  if(row && exactIndex>=0) return normalizedFit(row[1+exactIndex]);
   const match=TOPICS.find(x=>x[0]===topic&&x[1]===genre);
   if(GREAT_TOPICS[genre]?.includes(topic)) return match?.[2]>=8?3:2;
   if(match) return match[2]>=8?2:1;
   if(GREAT_TOPICS[genre]?.some(t=>topic.includes(t)||t.includes(topic))) return 1;
   return -1;
 }
+function normalizedFit(value){return value>=.95?3:value>=.85?2:value>=.75?1:value>=.65?0:-1;}
+function effectivePriority(topic,genre){
+  const base=REF.basePriorities?.[genre] || Array(9).fill(.8);
+  const override=REF.overrides?.[topic]?.[genre];
+  return base.map((value,index)=>override?.[index] ?? value);
+}
+function prioritySlider(topic,genre){
+  const values=effectivePriority(canonicalTopic(topic),genre);
+  return [0,1,2].map(phase=>{
+    const group=values.slice(phase*3,phase*3+3), peak=Math.max(...group,0.01);
+    return group.map(value=>Math.round(value/peak*100));
+  });
+}
 function fitLabel(value){return value===3?'+++':value===2?'++':value===1?'+':value===0?'--':'---';}
 function fitClass(value){return value>=3?'fit-3':value===2?'fit-2':value===1?'fit-1':value===0?'fit-0':'fit-neg';}
 function audienceFit(topic,audience){
+  const row=REF_TOPIC_BY_NAME.get(canonicalTopic(topic));
+  const audienceIndex=['Young','Everyone','Mature'].indexOf(audience);
+  if(row && audienceIndex>=0) return normalizedFit(row[7+audienceIndex]);
   const source=TOPICS.find(x=>x[0]===topic);
   const young=['School','Virtual Pet','Card Game','Fantasy','Sports','Comedy','Music','Fashion','Cooking'];
   const mature=['Horror','Military','Cyberpunk','Business','Government','Detective','Post-Apocalyptic','Spy','History'];
@@ -39,6 +66,9 @@ function audienceFit(topic,audience){
   return audience===source?.[3]?2:1;
 }
 function platformAudienceFit(platform,audience){
+  const row=REF_PLATFORM_BY_NAME.get(canonicalPlatform(platform));
+  const audienceIndex=['Young','Everyone','Mature'].indexOf(audience);
+  if(row && audienceIndex>=0) return normalizedFit(row[7+audienceIndex]);
   const young=['Game Link','Vena Gear','Master V','Nuu','GameSphere'];
   const mature=['PC','TES','DreamVast','PlaySystem','MBox','Playsystem 2','MBox 360','PlaySystem 3','MBox One'];
   if(audience==='Young'&&young.includes(platform)) return 3;
@@ -47,8 +77,8 @@ function platformAudienceFit(platform,audience){
 }
 function scoreFor(topic, genre, platform){
   const fit=fitFor(topic,genre);
-  const plat = PLATFORMS.find(x=>x[0]===platform);
-  const platformScore = plat ? plat[2] : 8;
+  const plat = REF_PLATFORM_BY_NAME.get(canonicalPlatform(platform));
+  const platformScore = plat ? plat[1+REF_GENRES.indexOf(genre)]*10 : 8;
   const genreWeight = ['RPG','Strategy','Adventure'].includes(genre) ? 1 : 0;
   const synergy = 5.2 + fit*1.05 + platformScore*.22 + genreWeight*.25;
   return Math.min(10,Math.max(5,Math.round(synergy*10)/10));
@@ -64,6 +94,9 @@ function buildGame(topic,genre,platform,audience,size){
   return {topic,genre,platform:platform==='all'?'PC / recommended':platform,audience,size,score,compat:{topicGenre,topicAudience,platformGenre,platformAudience}};
 }
 function platformScoreForGenre(platform,genre){
+  const row=REF_PLATFORM_BY_NAME.get(canonicalPlatform(platform));
+  const exactIndex=REF_GENRES.indexOf(genre);
+  if(row && exactIndex>=0) return normalizedFit(row[1+exactIndex]);
   const strong=['Action','Adventure','RPG'];
   const p=PLATFORMS.find(x=>x[0]===platform);
   if(!p) return 1;
@@ -77,13 +110,14 @@ function renderAnalysis(){
   topicCandidates.forEach(topic=>{(selectedGenre==='all'?GENRES:[selectedGenre]).forEach(genre=>candidates.push(buildGame(topic,genre,platform,audience,size)));});
   candidates.sort((a,b)=>b.score-a.score);
   const result=candidates[0];
-  const slider=SLIDER_VALUES[result.genre];
+  const slider=prioritySlider(result.topic,result.genre);
   $('analysisResult').classList.remove('hidden');
-  $('analysisResult').innerHTML=`<div class="analysis-header"><div><span class="eyebrow">03 / GAME PLAN</span><h2>${result.topic} <em>×</em> ${result.genre}</h2><p>${result.size} game · ${result.platform} · ${result.audience} audience</p></div><div class="analysis-score"><span>ESTIMATED FIT</span><strong>${result.score.toFixed(1)}</strong><small>/ 10</small></div></div><div class="analysis-body"><div class="compatibility-panel"><div class="subheading"><span class="eyebrow">COMPATIBILITY BREAKDOWN</span><span class="legend">+++ best · --- avoid</span></div>${[['Topic × Genre',result.compat.topicGenre],['Topic × Audience',result.compat.topicAudience],['Platform × Genre',result.compat.platformGenre],['Platform × Audience',result.compat.platformAudience]].map(x=>`<div class="compatibility-line"><span>${x[0]}</span><b class="fit-${x[1]>=3?'3':x[1]===2?'2':x[1]===1?'1':x[1]===0?'0':'neg'}">${fitLabel(x[1])}</b><i><em style="width:${Math.max(8,(x[1]+1)*25)}%"></em></i></div>`).join('')}</div><div class="why-panel"><span class="eyebrow">WHY THIS PICK</span><h3>${result.score>=8?'Strong setup':'Best available setup'}</h3><p>The planner selected the highest-scoring topic from your available topics for this setup. Use the phase plan as a starting preset and keep the game’s graphics, staff skills and current high score in mind.</p><button class="text-button" id="showAllPlans">Compare all matching topics →</button></div></div><div class="phase-plan"><div class="subheading"><div><span class="eyebrow">DEVELOPMENT PHASES</span><h3>Slider starting points</h3></div><span class="legend">${result.genre} preset · ${result.size} game</span></div><div class="phase-cards">${slider.map((values,index)=>`<div class="phase-plan-card"><span class="eyebrow">PHASE ${index+1}</span>${PHASE_LABELS[index].map((label,i)=>`<div class="phase-row"><span>${label}</span><div><i style="width:${values[i]}%"></i></div><b>${values[i]}%</b></div>`).join('')}</div>`).join('')}</div><small class="plan-disclaimer">Presets are directional. Topic overrides, graphics features, employee specialisation, bugs and the Target High Score can change the final result.</small></div>`;
+  $('analysisResult').innerHTML=`<div class="analysis-header"><div><span class="eyebrow">03 / GAME PLAN</span><h2>${result.topic} <em>×</em> ${result.genre}</h2><p>${result.size} game · ${result.platform} · ${result.audience} audience</p></div><div class="analysis-score"><span>ESTIMATED FIT</span><strong>${result.score.toFixed(1)}</strong><small>/ 10</small></div></div><div class="analysis-body"><div class="compatibility-panel"><div class="subheading"><span class="eyebrow">COMPATIBILITY BREAKDOWN</span><span class="legend">+++ best · --- avoid</span></div>${[['Topic × Genre',result.compat.topicGenre],['Topic × Audience',result.compat.topicAudience],['Platform × Genre',result.compat.platformGenre],['Platform × Audience',result.compat.platformAudience]].map(x=>`<div class="compatibility-line"><span>${x[0]}</span><b class="fit-${x[1]>=3?'3':x[1]===2?'2':x[1]===1?'1':x[1]===0?'0':'neg'}">${fitLabel(x[1])}</b><i><em style="width:${Math.max(8,(x[1]+1)*25)}%"></em></i></div>`).join('')}</div><div class="why-panel"><span class="eyebrow">WHY THIS PICK</span><h3>${result.score>=8?'Strong setup':'Best available setup'}</h3><p>The planner selected the highest-scoring topic from your available topics for this setup. Use the phase plan as a starting preset and keep the game’s graphics, staff skills and current high score in mind.</p><button class="text-button" id="showAllPlans">Compare all matching topics →</button></div></div><div class="phase-plan"><div class="subheading"><div><span class="eyebrow">DEVELOPMENT PHASES</span><h3>Slider starting points</h3></div><span class="legend">${result.topic} × ${result.genre} priority preset · ${result.size} game</span></div><div class="phase-cards">${slider.map((values,index)=>`<div class="phase-plan-card"><span class="eyebrow">PHASE ${index+1}</span>${PHASE_LABELS[index].map((label,i)=>`<div class="phase-row"><span>${label}</span><div><i style="width:${values[i]}%"></i></div><b>${values[i]}%</b></div>`).join('')}</div>`).join('')}</div><small class="plan-disclaimer">The preset uses the updated topic override when one exists; null override cells fall back to the Steam base priority. Graphics features, employee specialisation, bugs and the Target High Score can still change the final result.</small></div>`;
   $('showAllPlans').addEventListener('click',()=>{$('results').scrollIntoView({behavior:'smooth',block:'start'});});
 }
 function fillSelects(){
-  $('platformFilter').innerHTML = '<option value="all">All platforms</option>' + PLATFORMS.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
+  const platforms=REF.platforms.length?REF.platforms.map(p=>[p[0],p[0]]):PLATFORMS;
+  $('platformFilter').innerHTML = '<option value="all">All platforms</option>' + platforms.map(p=>`<option value="${p[0]}">${p[1]}</option>`).join('');
   $('genreFilter').innerHTML = '<option value="all">All genres</option>' + GENRES.map(g=>`<option value="${g}">${g}</option>`).join('');
   $('audienceFilter').innerHTML = AUDIENCES.map(a=>`<option value="${a}">${a}</option>`).join('');
   $('sizeFilter').innerHTML = GAME_SIZES.map(s=>`<option value="${s}">${s} game</option>`).join('');
@@ -91,7 +125,7 @@ function fillSelects(){
 function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify([...selectedTopics])); }
 function renderChips(){
   const query = $('topicSearch').value.toLowerCase();
-  const unique = [...new Set(TOPICS.map(x=>x[0]))].filter(t=>t.toLowerCase().includes(query));
+  const unique = defaultTopics.filter(t=>t.toLowerCase().includes(query));
   $('topicChips').innerHTML = unique.map(t=>`<button class="topic-choice ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="topic-choice-mark">${selectedTopics.has(t)?'✓':'+'}</span><span>${t}</span></button>`).join('');
   $('topicCount').textContent = `${selectedTopics.size} selected`;
   document.querySelectorAll('#topicChips [data-topic]').forEach(btn=>btn.addEventListener('click',()=>{selectedTopics.has(btn.dataset.topic)?selectedTopics.delete(btn.dataset.topic):selectedTopics.add(btn.dataset.topic);persist();renderChips();renderResults();renderManager();}));
@@ -112,17 +146,19 @@ function renderResults(){
 function renderReference(){
   const query=($('referenceSearch')?.value||'').toLowerCase();
   const topics=defaultTopics.filter(t=>t.toLowerCase().includes(query));
-  $('topicMatrix').innerHTML=`<thead><tr><th>Topic</th>${GENRES.map(g=>`<th>${g}</th>`).join('')}</tr></thead><tbody>${topics.map(t=>`<tr><td>${t}</td>${GENRES.map(g=>{const v=fitFor(t,g);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
-  const platformRows=PLATFORMS;
-  $('platformMatrix').innerHTML=`<thead><tr><th>Platform</th>${GENRES.map(g=>`<th>${g}</th>`).join('')}</tr></thead><tbody>${platformRows.map(p=>`<tr><td>${p[1]}</td>${GENRES.map((g,i)=>{const v=p[2]>=9?(['Action','Adventure','RPG'].includes(g)?3:2):p[2]>=8?(['Action','Adventure','RPG','Casual'].includes(g)?2:1):1;return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
+  $('topicMatrix').innerHTML=`<thead><tr><th>Topic</th>${REF_GENRES.map(g=>`<th>${g}</th>`).join('')}</tr></thead><tbody>${topics.map(t=>`<tr><td>${t}</td>${REF_GENRES.map(g=>{const v=fitFor(t,g);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
+  $('platformMatrix').innerHTML=`<thead><tr><th>Platform</th>${REF_GENRES.map(g=>`<th>${g}</th>`).join('')}</tr></thead><tbody>${REF.platforms.map(p=>`<tr><td>${p[0]}</td>${REF_GENRES.map((g,i)=>{const v=normalizedFit(p[1+i]);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
   $('audienceTopicMatrix').innerHTML=`<thead><tr><th>Topic</th>${['Everyone','Young','Mature'].map(a=>`<th>${a}</th>`).join('')}</tr></thead><tbody>${defaultTopics.map(t=>`<tr><td>${t}</td>${['Everyone','Young','Mature'].map(a=>{const v=audienceFit(t,a);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
-  $('audiencePlatformMatrix').innerHTML=`<thead><tr><th>Platform</th>${['Everyone','Young','Mature'].map(a=>`<th>${a}</th>`).join('')}</tr></thead><tbody>${PLATFORMS.map(p=>`<tr><td>${p[1]}</td>${['Everyone','Young','Mature'].map(a=>{const v=platformAudienceFit(p[0],a);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
+  $('audiencePlatformMatrix').innerHTML=`<thead><tr><th>Platform</th>${['Everyone','Young','Mature'].map(a=>`<th>${a}</th>`).join('')}</tr></thead><tbody>${REF.platforms.map(p=>`<tr><td>${p[0]}</td>${['Everyone','Young','Mature'].map(a=>{const v=platformAudienceFit(p[0],a);return `<td class="${fitClass(v)}">${fitLabel(v)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
   const sliderRows={Action:[[100,80,0],[0,80,100],[0,100,80]],Adventure:[[0,80,100],[100,0,0],[100,80,0]],RPG:[[0,80,100],[100,80,0],[100,100,80]],Simulation:[[80,100,0],[0,80,100],[0,100,80]],Strategy:[[100,100,0],[0,0,100],[100,100,80]],Casual:[[0,100,0],[0,100,0],[0,50,100]]};
   const names=[['Engine','Gameplay','Story'],['Dialogues','Level Design','AI'],['World Design','Graphics','Sound']];
   $('sliderMatrix').innerHTML=`<thead><tr><th>Genre</th><th>Phase 1</th><th>Phase 2</th><th>Phase 3</th></tr></thead><tbody>${GENRES.map(g=>`<tr><td>${g}</td>${sliderRows[g].map((v,i)=>`<td title="${names[i].join(' / ')}">${v.join(' / ')}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  const overrideRows=[];
+  Object.entries(REF.overrides).forEach(([topic,genres])=>Object.keys(genres).forEach(genre=>overrideRows.push(`<tr><td>${topic}</td><td>${genre}</td>${effectivePriority(topic,genre).map(v=>`<td class="${fitClass(normalizedFit(v))}">${Math.round(v*100)}%</td>`).join('')}</tr>`)));
+  $('overrideMatrix').innerHTML=`<thead><tr><th>Topic</th><th>Genre</th>${['Engine','Gameplay','Story','Dialogues','Level Design','AI','World Design','Graphics','Sound'].map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${overrideRows.join('')}</tbody>`;
 }
 function renderManager(){
-  const topics=[...new Set(TOPICS.map(x=>x[0]))];
+  const topics=defaultTopics;
   $('topicManager').innerHTML=`<div class="manager-toolbar"><div><span class="eyebrow">TOPIC COLLECTION</span><strong>${selectedTopics.size} of ${topics.length} active</strong></div><div class="manager-actions"><button class="manager-action" id="managerSelectAll">Select all</button><button class="manager-action muted-action" id="managerClearAll">Clear all</button></div></div><div class="manager-grid">${topics.map((t,i)=>`<button class="manager-item ${selectedTopics.has(t)?'selected':''}" data-topic="${t}"><span class="manager-index">${String(i+1).padStart(2,'0')}</span><span class="manager-name">${t}</span><span class="manager-state">${selectedTopics.has(t)?'✓':''}</span></button>`).join('')}</div>`;
   document.querySelectorAll('#topicManager .manager-item').forEach(item=>item.addEventListener('click',()=>{selectedTopics.has(item.dataset.topic)?selectedTopics.delete(item.dataset.topic):selectedTopics.add(item.dataset.topic);persist();renderChips();renderResults();renderManager();}));
   $('managerSelectAll').addEventListener('click',()=>{selectedTopics=new Set(defaultTopics);persist();renderChips();renderResults();renderManager();});
