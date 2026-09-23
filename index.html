@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260922-6" />
+    <link rel="stylesheet" href="styles.css?v=20260923-1" />
   </head>
   <body>
     <div class="shell">
@@ -23,7 +23,7 @@
         </nav>
         <div class="sidebar-footer">
           <div class="status-dot"><i></i> OFFLINE DATA</div>
-          <small>v0.1 · base 1.6.11</small>
+          <small>v0.3 · verified 1.7.x data</small>
         </div>
       </aside>
 
@@ -35,8 +35,8 @@
 
         <section id="plannerView" class="view">
           <div class="hero-card">
-            <div><p class="eyebrow accent">CREATE A GAME</p><h2>What game are we<br /><em>making today?</em></h2><p class="hero-copy">Walk through the choices, then get a compatibility score and a phase-by-phase development plan.</p></div>
-            <div class="hero-orbit"><span>TOPIC</span><b>+</b><span>GENRE</span><b>+</b><span>PLATFORM</span></div>
+            <div><p class="eyebrow accent">GAME BUILDER</p><h2>Choose the setup.<br /><em>See the best fit.</em></h2><p class="hero-copy">Select your unlocked topics and game constraints. The results below rank every valid topic × genre combination and explain the score.</p></div>
+            <div class="hero-summary"><strong>4 checks</strong><span>Topic · Genre · Audience · Platform</span></div>
           </div>
 
           <section class="control-panel">
@@ -45,7 +45,7 @@
             <div class="controls-grid">
               <div class="field field-wide topic-picker"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input topic-search"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search your unlocked topics..." /></div><div class="topic-actions"><button type="button" id="selectVisibleTopics">Select visible</button><button type="button" id="clearTopics">Clear all</button><span>Tap a topic to toggle it</span></div><div id="topicChips" class="chip-list"></div></div>
               <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Choose the primary genre for your game.</p></div>
-              <div class="field"><label for="platformFilter">PLATFORM</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Choose a console to score the plan.</p></div>
+              <div class="field"><label for="platformFilter">PLATFORM</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Choose a console, or leave this open to get a recommendation for each genre.</p></div>
               <div class="field"><label for="audienceFilter">TARGET AUDIENCE</label><select id="audienceFilter"><option>Everyone</option><option>Young</option><option>Mature</option></select><p class="field-hint">Topic and platform fit changes by audience.</p></div>
               <div class="field"><label for="sizeFilter">GAME SIZE</label><select id="sizeFilter"><option>Small</option><option>Medium</option><option>Large</option><option>AAA</option></select><p class="field-hint">Larger games need more T/D output.</p></div>
             </div>
@@ -61,7 +61,6 @@
           <div class="page-intro"><span class="eyebrow">FIELD MANUAL / 1.7.8</span><h2>Play smarter, not louder.</h2><p>A practical reference for the decisions the combination planner cannot make on its own. Use it alongside the ranking, not as a promise of a guaranteed 10/10.</p></div>
           <div class="guide-grid">
             <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◎</span><span class="guide-label">THE FOUR CHECKS</span></div><h3>Start from compatibility</h3><p>Review the four relationships before committing to a game. Prefer <strong>+++</strong> wherever possible; avoid <strong>---</strong> and be cautious with <strong>--</strong>.</p><div class="compat-grid"><span>Topic × Genre<small>Great / Good / Okay</small></span><span>Topic × Audience<small>Most impactful pair</small></span><span>Platform × Genre<small>Must not be bad</small></span><span>Platform × Audience<small>Reach and sales</small></span></div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">↗</span><span class="guide-label">NEXT MOVE</span></div><h3>What should I make next?</h3><ol class="guide-list"><li>Make a sequel when the previous game is old enough and you have a newer engine.</li><li>Take a publishing deal only when its compatibility is not a trap.</li><li>Otherwise make a new game your fanbase can support.</li></ol></article>
             <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">▦</span><span class="guide-label">RESEARCH ORDER</span></div><h3>Spend research points well</h3><p>Prioritize unique unlocks such as Medium Games, Casual, audiences and better graphics. Rebuild your custom engine whenever a better graphics level is available.</p><div class="mini-sequence"><b>Graphics</b><i>→</i><b>Engine</b><i>→</i><b>Topics</b><i>→</i><b>Features</b></div></article>
             <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◒</span><span class="guide-label">SLIDER STARTING POINTS</span></div><h3>Genre focus by development phase</h3><p class="muted-copy">These are practical presets for the base game. Exact percentages can shift with game size, graphics features, employee skills and the topic. Every row is ordered as the three sliders shown in that phase.</p><div class="slider-table"><div class="slider-row slider-head"><span>Genre</span><span>Phase 1</span><span>Phase 2</span><span>Phase 3</span></div><div class="slider-row"><b>Action</b><span>100 / 80 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Adventure</b><span>0 / 80 / 100</span><span>100 / 0 / 0</span><span>100 / 80 / 0</span></div><div class="slider-row"><b>RPG</b><span>0 / 80 / 100</span><span>100 / 80 / 0</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Strategy</b><span>100 / 100 / 0</span><span>0 / 0 / 100</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Simulation</b><span>80 / 100 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Casual</b><span>0 / 100 / 0</span><span>0 / 100 / 0</span><span>0 / 50 / 100</span></div></div></article>
             <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">↺</span><span class="guide-label">QUALITY LOOP</span></div><h3>Do not repeat blindly</h3><p>Repeating the exact same topic + genre can reduce review scores. Rotate between strong pairs, and use new topics and combinations to gain experience and unlock research faster.</p><div class="callout">Change the pair, not necessarily the genre.</div></article>
@@ -88,7 +87,7 @@
         </footer>
       </main>
     </div>
-    <script src="data.js?v=20260922-2"></script>
-    <script src="app.js?v=20260922-6"></script>
+    <script src="data.js?v=20260923-1"></script>
+    <script src="app.js?v=20260923-1"></script>
   </body>
 </html>

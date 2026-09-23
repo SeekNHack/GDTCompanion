@@ -85,16 +85,21 @@ function scoreFor(topic, genre, platform){
   const synergy = 5.2 + fit*1.05 + platformScore*.22 + genreWeight*.25;
   return Math.min(10,Math.max(5,Math.round(synergy*10)/10));
 }
+function recommendedPlatform(genre,audience){
+  return REF.platforms.map(row=>({name:row[0],genreFit:normalizedFit(row[1+REF_GENRES.indexOf(genre)]),audienceFit:platformAudienceFit(row[0],audience)})).sort((a,b)=>(fitPoints(b.genreFit)+fitPoints(b.audienceFit))-(fitPoints(a.genreFit)+fitPoints(a.audienceFit)))[0];
+}
 function buildGame(topic,genre,platform,audience,size){
   const topicGenre=fitFor(topic,genre);
   const topicAudience=audienceFit(topic,audience);
-  const platformGenre=platform==='all'?2:platformScoreForGenre(platform,genre);
-  const platformAudience=platform==='all'?2:platformAudienceFit(platform,audience);
+  const recommended=platform==='all'?recommendedPlatform(genre,audience):null;
+  const chosenPlatform=platform==='all'?recommended.name:platform;
+  const platformGenre=platform==='all'?recommended.genreFit:platformScoreForGenre(platform,genre);
+  const platformAudience=platform==='all'?recommended.audienceFit:platformAudienceFit(platform,audience);
   const sizeMultiplier={Small:1,Medium:1.2,Large:1.4,AAA:1.8}[size]||1;
   const breakdown={topicGenre:fitPoints(topicGenre),platformGenre:fitPoints(platformGenre),topicAudience:fitPoints(topicAudience),platformAudience:fitPoints(platformAudience)};
   const totalScore=breakdown.topicGenre+breakdown.platformGenre+breakdown.topicAudience+breakdown.platformAudience;
   const score=Math.round(totalScore/40*10)/10;
-  return {topic,genre,platform:platform==='all'?'All platforms':platform,audience,size,score,totalScore,sizeMultiplier,compat:{topicGenre,topicAudience,platformGenre,platformAudience},breakdown};
+  return {topic,genre,platform:chosenPlatform,platformLabel:platform==='all'?'Suggested platform':'Selected platform',platformWasSuggested:platform==='all',audience,size,score,totalScore,sizeMultiplier,compat:{topicGenre,topicAudience,platformGenre,platformAudience},breakdown};
 }
 function platformScoreForGenre(platform,genre){
   const row=REF_PLATFORM_BY_NAME.get(canonicalPlatform(platform));
@@ -141,7 +146,7 @@ function renderGenreOptions(){
 function resultDetails(game){
   const slider=prioritySlider(game.topic,game.genre);
   const checks=[['Topic × Genre',game.compat.topicGenre,game.breakdown.topicGenre],['Genre × Platform',game.compat.platformGenre,game.breakdown.platformGenre],['Topic × Audience',game.compat.topicAudience,game.breakdown.topicAudience],['Platform × Audience',game.compat.platformAudience,game.breakdown.platformAudience]];
-  return `<div class="result-details-content"><div class="detail-score-head"><div><span class="eyebrow">TOTAL COMPATIBILITY</span><strong>${game.totalScore} <small>/ 400</small></strong></div><span class="detail-score-grade ${scoreClass(game.score*10)}">${game.score.toFixed(1)} / 10</span></div><div class="detail-checks">${checks.map(([label,value,points])=>`<div class="detail-check"><div class="detail-check-label"><span>${label}</span><b class="${fitClass(value)}">${fitLabel(value)}</b></div><div class="detail-score-bar"><i class="${scoreClass(points)}" style="width:${points}%"></i></div><strong>${points}<small> pts</small></strong></div>`).join('')}</div><div class="detail-plan"><div class="detail-plan-heading"><span class="eyebrow">DEVELOPMENT PLAN</span><span>${game.size} · ${game.audience}</span></div><div class="detail-phases">${slider.map((values,index)=>`<div><strong>Phase ${index+1}</strong><span>${PHASE_LABELS[index].map((label,i)=>`<em><b>${label}</b><i><u style="width:${values[i]}%"></u></i>${values[i]}%</em>`).join('')}</span></div>`).join('')}</div></div></div>`;
+  return `<div class="result-details-content"><div class="detail-score-head"><div><span class="eyebrow">TOTAL COMPATIBILITY</span><strong>${game.totalScore} <small>/ 400</small></strong></div><span class="detail-score-grade ${scoreClass(game.score*10)}">${game.score.toFixed(1)} / 10</span></div><div class="detail-platform"><span>${game.platformLabel}</span><strong>${game.platform}</strong></div><div class="detail-checks">${checks.map(([label,value,points])=>`<div class="detail-check"><div class="detail-check-label"><span>${label}</span><b class="${fitClass(value)}">${fitLabel(value)}</b></div><div class="detail-score-bar"><i class="${scoreClass(points)}" style="width:${points}%"></i></div><strong>${points}<small> pts</small></strong></div>`).join('')}</div><div class="detail-plan"><div class="detail-plan-heading"><span class="eyebrow">DEVELOPMENT PLAN</span><span>${game.size} · ${game.audience}</span></div><div class="detail-phases">${slider.map((values,index)=>`<div><strong>Phase ${index+1}</strong><span>${PHASE_LABELS[index].map((label,i)=>`<em><b>${label}</b><i><u style="width:${values[i]}%"></u></i>${values[i]}%</em>`).join('')}</span></div>`).join('')}</div></div></div>`;
 }
 function renderResults(){
   const platform = $('platformFilter').value, genre = $('genreFilter').value, audience = $('audienceFilter').value, size = $('sizeFilter').value, sort = $('sortFilter').value;
@@ -149,7 +154,7 @@ function renderResults(){
   selectedTopics.forEach(topic=>{GENRES.filter(g=>genre==='all'||g===genre).forEach(g=>{const game=buildGame(topic,g,platform,audience,size);if(game.score)rows.push(game);});});
   rows.sort((a,b)=>sort==='alpha'?a.topic.localeCompare(b.topic):b.totalScore-a.totalScore);
   $('resultCount').textContent=rows.length;
-  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">${r.size} game · ${r.audience} audience</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.totalScore} / 400</span></div><div class="result-score-label"><strong>${r.score.toFixed(1)} / 10</strong><span>combined fit score</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div><button type="button" class="result-toggle" aria-expanded="false">View score breakdown <span>+</span></button><div class="result-details" hidden>${resultDetails(r)}</div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
+  $('results').innerHTML=rows.slice(0,24).map((r,i)=>`<article class="result-card"><span class="rank">#${String(i+1).padStart(2,'0')}</span><span class="eyebrow">${r.platformLabel}: ${r.platform}</span><h4>${r.topic} <span class="muted">×</span> ${r.genre}</h4><div class="result-meta">${r.size} game · ${r.audience} audience</div><div class="score-row"><div class="score-bar"><i style="width:${r.score*10}%"></i></div><span class="score">${r.totalScore} / 400</span></div><div class="result-score-label"><strong>${r.score.toFixed(1)} / 10</strong><span>combined fit score</span></div><div class="tags"><span class="tag orange">${fitFor(r.topic,r.genre)>=3?'GREAT COMBO':fitFor(r.topic,r.genre)>=2?'GOOD COMBO':'OKAY COMBO'}</span><span class="tag">${fitLabel(fitFor(r.topic,r.genre))}</span></div><button type="button" class="result-toggle" aria-expanded="false">View score breakdown <span>+</span></button><div class="result-details" hidden>${resultDetails(r)}</div></article>`).join('') || '<div class="empty">No combinations found. Try enabling more topics or changing a filter.</div>';
   document.querySelectorAll('.result-toggle').forEach(button=>button.addEventListener('click',()=>{const details=button.nextElementSibling;const open=details.hidden;details.hidden=!open;button.setAttribute('aria-expanded',String(open));button.innerHTML=open?'Hide breakdown <span>−</span>':'View breakdown <span>+</span>';}));
 }
 function renderReference(){
