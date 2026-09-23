@@ -1,68 +1,68 @@
 <!doctype html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Trova le migliori combinazioni di tema, genere e console per Game Dev Tycoon e consulta le tre fasi di sviluppo.">
-  <title>GDT Companion — Combinazioni Game Dev Tycoon</title>
+  <meta name="description" content="Find the best topic, genre, and platform combinations for Game Dev Tycoon, with slider plans for all three development stages.">
+  <title>GDT Companion — Game Dev Tycoon combinations</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260923-2">
+  <link rel="stylesheet" href="styles.css?v=20260923-3">
 </head>
 <body>
   <div class="site-shell">
     <header class="site-header">
-      <a class="brand" href="#classifica" aria-label="GDT Companion, vai alla classifica"><span class="brand-icon">✦</span><span>GDT <strong>Companion</strong></span></a>
-      <nav class="site-nav" aria-label="Navigazione principale"><a href="#classifica">Classifica</a><a href="#guida">Guida rapida</a><a href="#dati">Dati e metodo</a></nav>
+      <a class="brand" href="#rankings" aria-label="GDT Companion, go to rankings"><span class="brand-icon">✦</span><span>GDT <strong>Companion</strong></span></a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="#rankings">Rankings</a><a href="#guide">Quick guide</a><a href="#method">Data and method</a></nav>
     </header>
     <main>
-      <section id="classifica" class="planner-section">
+      <section id="rankings" class="planner-section">
         <div class="intro">
-          <div><p class="kicker">GAME DEV TYCOON / PLANNER</p><h1>La prossima idea<br><em>parte da qui.</em></h1><p>Seleziona i temi che hai sbloccato, scegli genere e console, poi confronta le combinazioni migliori. Ogni risultato include il piano per le tre fasi di sviluppo.</p></div>
-          <div class="intro-aside"><span>COME FUNZIONA</span><strong>01</strong> Filtra i temi <strong>02</strong> Scegli il setup <strong>03</strong> Apri il piano</div>
+          <div><p class="kicker">GAME DEV TYCOON / PLANNER</p><h1>Your next hit<br><em>starts here.</em></h1><p>Select the topics you've unlocked, choose a genre and platform, then compare the best combinations. Every result includes a plan for all three development stages.</p></div>
+          <div class="intro-aside"><span>HOW IT WORKS</span><strong>01</strong> Filter topics <strong>02</strong> Choose your setup <strong>03</strong> Open the plan</div>
         </div>
         <div class="planner-layout">
           <aside class="filters" aria-labelledby="filters-title">
-            <div class="filters-heading"><div><p class="kicker">IL TUO SETUP</p><h2 id="filters-title">Filtri</h2></div><button id="resetFilters" class="text-button" type="button">Reimposta</button></div>
+            <div class="filters-heading"><div><p class="kicker">YOUR SETUP</p><h2 id="filters-title">Filters</h2></div><button id="resetFilters" class="text-button" type="button">Reset</button></div>
             <div class="filter-block topic-filter">
-              <div class="filter-label"><label for="topicSearch">Temi</label><span id="selectedTopicCount">Tutti</span></div>
-              <p>Scegli uno o più temi. Senza selezione li confrontiamo tutti.</p>
-              <input id="topicSearch" type="search" placeholder="Cerca un tema…" autocomplete="off">
-              <div class="topic-toolbar"><button id="allTopics" type="button">Tutti i temi</button><button id="visibleTopics" type="button">Seleziona visibili</button></div>
-              <div id="topicChoices" class="topic-choices" role="group" aria-label="Seleziona temi"></div>
+              <div class="filter-label"><label for="topicSearch">Topics</label><span id="selectedTopicCount">All</span></div>
+              <p>Choose one or more topics. With none selected, all topics are included.</p>
+              <input id="topicSearch" type="search" placeholder="Search topics…" autocomplete="off">
+              <div class="topic-toolbar"><button id="allTopics" type="button">All topics</button><button id="visibleTopics" type="button">Select visible</button></div>
+              <div id="topicChoices" class="topic-choices" role="group" aria-label="Select topics"></div>
             </div>
-            <div class="filter-block"><label for="genreFilter">Genere</label><select id="genreFilter"><option value="all">Tutti i generi</option></select></div>
-            <div class="filter-block"><label for="platformFilter">Console</label><select id="platformFilter"><option value="best">Migliore per ogni combinazione</option><option value="all">Tutte le console</option></select><p>La scelta automatica mostra una sola console per tema e genere.</p></div>
-            <div class="filter-block"><label for="audienceFilter">Pubblico</label><select id="audienceFilter"><option value="Everyone">Tutti</option><option value="Young">Giovani</option><option value="Mature">Adulti</option></select></div>
-            <p class="filters-note">La classifica si aggiorna quando cambi un filtro. I temi selezionati vengono salvati su questo dispositivo.</p>
+            <div class="filter-block"><label for="genreFilter">Genre</label><select id="genreFilter"><option value="all">All genres</option></select></div>
+            <div class="filter-block"><label for="platformFilter">Platform</label><select id="platformFilter"><option value="best">Best for each combination</option><option value="all">All platforms</option></select><p>Automatic selection shows one platform per topic and genre.</p></div>
+            <div class="filter-block"><label for="audienceFilter">Audience</label><select id="audienceFilter"><option value="Everyone">Everyone</option><option value="Young">Young</option><option value="Mature">Mature</option></select></div>
+            <p class="filters-note">Rankings update as you change filters. Your selected topics are saved on this device.</p>
           </aside>
           <div class="ranking" aria-labelledby="ranking-title">
-            <div class="ranking-heading"><div><p class="kicker">RISULTATI</p><h2 id="ranking-title">Le migliori combinazioni</h2><p id="resultSummary" role="status" aria-live="polite"></p></div><span class="ranking-badge">↓ DAL MIGLIORE</span></div>
-            <div class="ranking-guide"><span class="guide-dot"></span> Il punteggio misura la compatibilità dei quattro abbinamenti. Non predice il voto della recensione.</div>
+            <div class="ranking-heading"><div><p class="kicker">RESULTS</p><h2 id="ranking-title">Top combinations</h2><p id="resultSummary" role="status" aria-live="polite"></p></div><span class="ranking-badge">↓ BEST FIRST</span></div>
+            <div class="ranking-guide"><span class="guide-dot"></span> The score combines four compatibility checks. It does not predict your review score.</div>
             <div id="results" class="results-list"></div>
-            <button id="showMore" class="show-more" type="button" hidden>Mostra altri risultati</button>
+            <button id="showMore" class="show-more" type="button" hidden>Show more results</button>
           </div>
         </div>
       </section>
-      <section id="guida" class="content-section">
-        <p class="kicker">DA TENERE A PORTATA DI MANO</p><h2>Guida rapida</h2><p class="section-lead">La compatibilità è un buon punto di partenza. Per un gioco riuscito contano anche le scelte durante lo sviluppo.</p>
+      <section id="guide" class="content-section">
+        <p class="kicker">KEEP THIS HANDY</p><h2>Quick guide</h2><p class="section-lead">Compatibility is a useful starting point. Your decisions during development also matter.</p>
         <div class="guide-grid">
-          <article><span>01 / COMPATIBILITÀ</span><h3>Controlla i quattro abbinamenti</h3><p>Tema × genere, genere × console, tema × pubblico e console × pubblico compongono la classifica. Apri un risultato per vedere i singoli valori.</p></article>
-          <article><span>02 / SVILUPPO</span><h3>Regola le tre fasi</h3><p>I valori dei cursori sono indicazioni iniziali per il genere scelto. Dimensione del gioco, funzionalità e capacità del team possono richiedere modifiche.</p></article>
-          <article><span>03 / VARIETÀ</span><h3>Alterna le idee</h3><p>Ripetere di seguito lo stesso tema e genere può penalizzare il risultato. Tieni d’occhio anche la qualità raggiunta nei giochi precedenti.</p></article>
-          <article><span>04 / SCALA</span><h3>Cresci al momento giusto</h3><p>Giochi Medium, Large e AAA richiedono più punti Design e Tech. Migliora grafica e motore, poi amplia il team prima dei progetti più grandi.</p></article>
+          <article><span>01 / COMPATIBILITY</span><h3>Check all four pairings</h3><p>Topic × genre, genre × platform, topic × audience, and platform × audience make up the ranking. Open a result to see each value.</p></article>
+          <article><span>02 / DEVELOPMENT</span><h3>Adjust the three stages</h3><p>The sliders are starting points for the chosen genre. Game size, features, and team skills may call for changes.</p></article>
+          <article><span>03 / VARIETY</span><h3>Mix up your ideas</h3><p>Repeating the same topic and genre in consecutive games can hurt results. Keep your previous games' quality in mind, too.</p></article>
+          <article><span>04 / SCALE</span><h3>Grow at the right time</h3><p>Medium, Large, and AAA games need more Design and Tech points. Improve your graphics and engine, then grow your team before taking on bigger projects.</p></article>
         </div>
       </section>
-      <section id="dati" class="content-section data-section">
-        <p class="kicker">TRASPARENZA</p><h2>Dati e metodo</h2><p class="section-lead">La classifica usa le tabelle di compatibilità del gioco. Ogni abbinamento vale da 0 a 100 punti: +++ = 100, ++ = 80, + = 60, -- = 30, --- = 0. Il totale massimo è 400. A parità di punteggio diamo precedenza a tema × genere e poi a genere × console.</p>
-        <details class="data-details"><summary>Consulta le tabelle di compatibilità</summary><div class="data-tables"><div><h3>Tema × genere</h3><div class="table-scroll"><table id="topicTable"></table></div></div><div><h3>Console × genere</h3><div class="table-scroll"><table id="platformTable"></table></div></div><div><h3>Tema × pubblico</h3><div class="table-scroll"><table id="topicAudienceTable"></table></div></div><div><h3>Console × pubblico</h3><div class="table-scroll"><table id="platformAudienceTable"></table></div></div></div></details>
-        <p class="sources">Fonti: <a href="https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744" target="_blank" rel="noopener noreferrer">tabelle Steam</a>, <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noopener noreferrer">Success Guild 1.7.8</a>, <a href="https://github.com/boeloep/GameDevTycoon-Assistant" target="_blank" rel="noopener noreferrer">GameDevTycoon-Assistant</a>. Le stime sono una guida per il gioco base, non una formula per il voto finale.</p>
+      <section id="method" class="content-section data-section">
+        <p class="kicker">TRANSPARENCY</p><h2>Data and method</h2><p class="section-lead">The ranking uses the game's compatibility tables. Each pairing earns 0 to 100 points: +++ = 100, ++ = 80, + = 60, -- = 30, --- = 0. The maximum is 400. Ties favor topic × genre, then genre × platform.</p>
+        <details class="data-details"><summary>Browse the compatibility tables</summary><div class="data-tables"><div><h3>Topic × genre</h3><div class="table-scroll"><table id="topicTable"></table></div></div><div><h3>Platform × genre</h3><div class="table-scroll"><table id="platformTable"></table></div></div><div><h3>Topic × audience</h3><div class="table-scroll"><table id="topicAudienceTable"></table></div></div><div><h3>Platform × audience</h3><div class="table-scroll"><table id="platformAudienceTable"></table></div></div></div></details>
+        <p class="sources">Sources: <a href="https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744" target="_blank" rel="noopener noreferrer">Steam tables</a>, <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noopener noreferrer">Success Guild 1.7.8</a>, and <a href="https://github.com/boeloep/GameDevTycoon-Assistant" target="_blank" rel="noopener noreferrer">GameDevTycoon-Assistant</a>. These estimates guide decisions in the base game; they are not a formula for the final review score.</p>
       </section>
     </main>
-    <footer class="site-footer"><span>✦ GDT Companion</span><span>Progetto amatoriale non affiliato a Greenheart Games.</span></footer>
+    <footer class="site-footer"><span>✦ GDT Companion</span><span>Fan-made project, not affiliated with Greenheart Games.</span></footer>
   </div>
   <script src="data.js?v=20260923-1"></script>
-  <script src="app.js?v=20260923-2"></script>
+  <script src="app.js?v=20260923-3"></script>
 </body>
 </html>

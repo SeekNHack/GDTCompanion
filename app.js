@@ -12,12 +12,12 @@ const sliderPresets = {
   Casual: [[0, 100, 0], [0, 100, 0], [0, 50, 100]]
 };
 const phaseLabels = [
-  ['Motore', 'Gameplay', 'Storia / Missioni'],
-  ['Dialoghi', 'Level design', 'IA'],
-  ['Mondo', 'Grafica', 'Audio']
+  ['Engine', 'Gameplay', 'Story / Quests'],
+  ['Dialogues', 'Level Design', 'AI'],
+  ['World Design', 'Graphics', 'Sound']
 ];
-const genreNames = {Action: 'Azione', Adventure: 'Avventura', RPG: 'RPG', Simulation: 'Simulazione', Strategy: 'Strategia', Casual: 'Casual'};
-const audienceNames = {Everyone: 'Tutti', Young: 'Giovani', Mature: 'Adulti'};
+const genreNames = {Action: 'Action', Adventure: 'Adventure', RPG: 'RPG', Simulation: 'Simulation', Strategy: 'Strategy', Casual: 'Casual'};
+const audienceNames = {Everyone: 'Everyone', Young: 'Young', Mature: 'Mature'};
 const storageKey = 'gdt-selected-topics-v2';
 const $ = id => document.getElementById(id);
 const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
@@ -49,13 +49,13 @@ function saveTopics() {
 }
 
 function renderTopicChoices() {
-  const query = $('topicSearch').value.trim().toLocaleLowerCase('it');
-  const visible = topics.filter(row => row[0].toLocaleLowerCase('it').includes(query));
-  $('selectedTopicCount').textContent = selectedTopics.size ? `${selectedTopics.size} selezionati` : 'Tutti';
+  const query = $('topicSearch').value.trim().toLocaleLowerCase('en');
+  const visible = topics.filter(row => row[0].toLocaleLowerCase('en').includes(query));
+  $('selectedTopicCount').textContent = selectedTopics.size ? `${selectedTopics.size} selected` : 'All';
   $('allTopics').classList.toggle('active', !selectedTopics.size);
   $('topicChoices').innerHTML = visible.length
     ? visible.map(row => `<button type="button" class="topic-choice ${selectedTopics.has(row[0]) ? 'selected' : ''}" data-topic="${escapeHTML(row[0])}" aria-pressed="${selectedTopics.has(row[0])}"><span class="choice-check" aria-hidden="true">${selectedTopics.has(row[0]) ? '✓' : ''}</span>${escapeHTML(row[0])}</button>`).join('')
-    : '<p class="no-topics">Nessun tema trovato.</p>';
+    : '<p class="no-topics">No topics found.</p>';
 }
 
 function candidate(topic, genre, platform, audience) {
@@ -75,9 +75,9 @@ function compareResults(a, b) {
   return b.total - a.total
     || b.checks[0] - a.checks[0]
     || b.checks[1] - a.checks[1]
-    || a.topic.localeCompare(b.topic, 'it')
-    || a.genre.localeCompare(b.genre, 'it')
-    || a.platform.localeCompare(b.platform, 'it');
+    || a.topic.localeCompare(b.topic, 'en')
+    || a.genre.localeCompare(b.genre, 'en')
+    || a.platform.localeCompare(b.platform, 'en');
 }
 
 function buildRanking() {
@@ -111,7 +111,7 @@ function checkMarkup(label, level) {
 
 function phasesMarkup(genre) {
   return sliderPresets[genre].map((values, phase) => `
-    <div class="phase-card"><h4>Fase ${phase + 1}</h4>
+    <div class="phase-card"><h4>Stage ${phase + 1}</h4>
       ${values.map((value, index) => `<div class="slider-row"><span>${phaseLabels[phase][index]}</span><div class="slider-track"><i style="width:${value}%"></i></div><strong>${value}%</strong></div>`).join('')}
     </div>`).join('');
 }
@@ -120,14 +120,14 @@ function resultMarkup(game, index) {
   const percent = Math.round(game.total / 4);
   const [topicGenre, platformGenre, topicAudience, platformAudience] = game.checks;
   return `<article class="result-card">
-    <div class="result-top"><span class="rank">#${String(index + 1).padStart(2, '0')}</span><div class="result-title"><h3>${escapeHTML(game.topic)} <span>×</span> ${genreNames[game.genre]}</h3><p>${escapeHTML(game.platform)} <span>·</span> Pubblico: ${audienceNames[game.audience]}</p></div><div class="result-score"><strong>${percent}%</strong><span>compatibilità</span></div></div>
-    <div class="result-strip"><span>Tema / genere <b class="${fitClass(topicGenre)}">${fitText(topicGenre)}</b></span><span>Genere / console <b class="${fitClass(platformGenre)}">${fitText(platformGenre)}</b></span><span>${game.total} / 400 punti</span></div>
-    <details class="result-details"><summary>Vedi compatibilità e 3 fasi <span aria-hidden="true">⌄</span></summary>
-      <div class="details-content"><div class="details-heading"><h4>Perché è in classifica</h4><p>Quattro compatibilità, fino a 100 punti ciascuna.</p></div>
-        <div class="checks-grid">${checkMarkup('Tema × genere', topicGenre)}${checkMarkup('Genere × console', platformGenre)}${checkMarkup('Tema × pubblico', topicAudience)}${checkMarkup('Console × pubblico', platformAudience)}</div>
-        <div class="details-heading phase-heading"><h4>Le 3 fasi · ${genreNames[game.genre]}</h4><p>Posizioni iniziali dei cursori in base al genere.</p></div>
+    <div class="result-top"><span class="rank">#${String(index + 1).padStart(2, '0')}</span><div class="result-title"><h3>${escapeHTML(game.topic)} <span>×</span> ${genreNames[game.genre]}</h3><p>${escapeHTML(game.platform)} <span>·</span> Audience: ${audienceNames[game.audience]}</p></div><div class="result-score"><strong>${percent}%</strong><span>compatibility</span></div></div>
+    <div class="result-strip"><span>Topic / genre <b class="${fitClass(topicGenre)}">${fitText(topicGenre)}</b></span><span>Genre / platform <b class="${fitClass(platformGenre)}">${fitText(platformGenre)}</b></span><span>${game.total} / 400 points</span></div>
+    <details class="result-details"><summary>View compatibility and 3 stages <span aria-hidden="true">⌄</span></summary>
+      <div class="details-content"><div class="details-heading"><h4>Why this ranks here</h4><p>Four compatibility checks, up to 100 points each.</p></div>
+        <div class="checks-grid">${checkMarkup('Topic × genre', topicGenre)}${checkMarkup('Genre × platform', platformGenre)}${checkMarkup('Topic × audience', topicAudience)}${checkMarkup('Platform × audience', platformAudience)}</div>
+        <div class="details-heading phase-heading"><h4>The 3 stages · ${genreNames[game.genre]}</h4><p>Starting slider positions for this genre.</p></div>
         <div class="phases-grid">${phasesMarkup(game.genre)}</div>
-        <p class="phase-note">I cursori sono una guida: adatta il piano a dimensione, funzionalità e personale del tuo gioco.</p>
+        <p class="phase-note">These sliders are a starting point. Adjust them for your game's size, features, and team.</p>
       </div>
     </details>
   </article>`;
@@ -138,23 +138,23 @@ function appendResults() {
   $('results').insertAdjacentHTML('beforeend', rankedResults.slice(visibleCount, nextCount).map((game, index) => resultMarkup(game, visibleCount + index)).join(''));
   visibleCount = nextCount;
   $('showMore').hidden = visibleCount >= rankedResults.length;
-  if (!$('showMore').hidden) $('showMore').textContent = `Mostra altri risultati (${visibleCount} di ${rankedResults.length})`;
+  if (!$('showMore').hidden) $('showMore').textContent = `Show more results (${visibleCount} of ${rankedResults.length})`;
 }
 
 function renderRanking() {
   rankedResults = buildRanking();
   visibleCount = 0;
   $('results').innerHTML = '';
-  $('resultSummary').textContent = `${rankedResults.length.toLocaleString('it-IT')} combinazioni trovate${selectedTopics.size ? ` per ${selectedTopics.size} temi` : ''}.`;
+  $('resultSummary').textContent = `${rankedResults.length.toLocaleString('en-US')} combinations found${selectedTopics.size ? ` for ${selectedTopics.size} topics` : ''}.`;
   if (rankedResults.length) appendResults();
   else {
-    $('results').innerHTML = '<div class="empty-results">Nessuna combinazione trovata. Cambia i filtri per riprovare.</div>';
+    $('results').innerHTML = '<div class="empty-results">No combinations found. Try changing your filters.</div>';
     $('showMore').hidden = true;
   }
 }
 
 function tableMarkup(rows, labels, startIndex) {
-  return `<thead><tr><th scope="col">Nome</th>${labels.map(label => `<th scope="col">${escapeHTML(label)}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr><th scope="row">${escapeHTML(row[0])}</th>${labels.map((_, index) => { const level = fitLevel(row[startIndex + index]); return `<td><span class="fit ${fitClass(level)}">${fitText(level)}</span></td>`; }).join('')}</tr>`).join('')}</tbody>`;
+  return `<thead><tr><th scope="col">Name</th>${labels.map(label => `<th scope="col">${escapeHTML(label)}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr><th scope="row">${escapeHTML(row[0])}</th>${labels.map((_, index) => { const level = fitLevel(row[startIndex + index]); return `<td><span class="fit ${fitClass(level)}">${fitText(level)}</span></td>`; }).join('')}</tr>`).join('')}</tbody>`;
 }
 
 function renderTables() {
@@ -187,8 +187,8 @@ function init() {
     renderRanking();
   });
   $('visibleTopics').addEventListener('click', () => {
-    const query = $('topicSearch').value.trim().toLocaleLowerCase('it');
-    for (const row of topics) if (row[0].toLocaleLowerCase('it').includes(query)) selectedTopics.add(row[0]);
+    const query = $('topicSearch').value.trim().toLocaleLowerCase('en');
+    for (const row of topics) if (row[0].toLocaleLowerCase('en').includes(query)) selectedTopics.add(row[0]);
     saveTopics();
     renderTopicChoices();
     renderRanking();

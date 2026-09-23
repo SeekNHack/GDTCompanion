@@ -1,17 +1,17 @@
 # GDT Companion
 
-Planner statico in italiano per **Game Dev Tycoon**. Seleziona uno o più temi, un genere, una console e il pubblico per ottenere una classifica delle combinazioni. Aprendo un risultato trovi i quattro valori di compatibilità e i cursori suggeriti per le tre fasi di sviluppo.
+Static planner for **Game Dev Tycoon**. Select one or more topics, a genre, a platform, and a target audience to rank combinations. Open a result to see all four compatibility checks and suggested sliders for the three development stages.
 
-## Uso
+## Use
 
-Apri [la webapp su GitHub Pages](https://seeknhack.github.io/GDTCompanion/) oppure `index.html` nel browser. Non servono dipendenze, installazione o build. Per pubblicarla con GitHub Pages, seleziona il branch `main` e la cartella `/ (root)` in **Settings → Pages**.
+Open the [web app on GitHub Pages](https://seeknhack.github.io/GDTCompanion/) or open `index.html` in a browser. There are no dependencies, installation steps, or build process. To publish it with GitHub Pages, select the `main` branch and `/ (root)` folder under **Settings → Pages**.
 
-La console predefinita è la migliore disponibile per ciascuna coppia tema/genere secondo i dati. Puoi scegliere una console specifica oppure mostrare tutte le console. I temi selezionati vengono salvati nel browser. I risultati sono mostrati a blocchi per mantenere la pagina reattiva.
+By default, the planner picks the highest-scoring platform in the dataset for each topic and genre pair. You can select a specific platform or show them all. Selected topics are saved in the browser. Results are displayed in batches to keep the page responsive.
 
-## Come viene calcolata la classifica
+## How the ranking works
 
-I dati in `data.js` contengono la compatibilità di temi e console con i sei generi e i tre pubblici. Il planner somma quattro abbinamenti: tema × genere, genere × console, tema × pubblico e console × pubblico. Ogni valore viene convertito in punti: `+++` = 100, `++` = 80, `+` = 60, `--` = 30, `---` = 0. Il massimo è 400. A parità di totale, ha precedenza tema × genere e poi genere × console. La percentuale mostrata è il totale diviso per quattro.
+The tables in `data.js` describe topic and platform compatibility with six genres and three audiences. The planner adds four checks: topic × genre, genre × platform, topic × audience, and platform × audience. Each rating becomes points: `+++` = 100, `++` = 80, `+` = 60, `--` = 30, `---` = 0. The maximum is 400. Ties favor topic × genre, then genre × platform. The displayed percentage is the total divided by four.
 
-Le tre fasi usano preset dei cursori per genere. Sono indicazioni iniziali, non valori garantiti: dimensione del gioco, funzionalità, abilità del team, ripetizione delle idee e qualità dei giochi precedenti influenzano il risultato.
+The three stages use genre-based slider presets. They are starting points, not guaranteed values: game size, features, team skills, repeated ideas, and the quality of previous games all affect the outcome.
 
-Fonti dei dati: [tabelle Steam](https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744), [Success Guild 1.7.8](https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8) e [GameDevTycoon-Assistant](https://github.com/boeloep/GameDevTycoon-Assistant).
+Data sources: [Steam tables](https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744), [Success Guild 1.7.8](https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8), and [GameDevTycoon-Assistant](https://github.com/boeloep/GameDevTycoon-Assistant).
