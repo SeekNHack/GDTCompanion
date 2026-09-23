@@ -1,93 +1,68 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="A planner for finding the best topic, genre, and platform combinations in Game Dev Tycoon." />
-    <title>GDT Companion — Game Dev Tycoon planner</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=20260923-1" />
-  </head>
-  <body>
-    <div class="shell">
-      <aside class="sidebar">
-        <div class="brand"><span class="brand-mark">✦</span><span>GDT Companion</span></div>
-        <p class="brand-subtitle">GAME DEV TYCOON<br />COMBINATION LAB</p>
-        <nav>
-          <button class="nav-link active" data-view="planner"><span>⌘</span> Create a game</button>
-          <button class="nav-link" data-view="guide"><span>▤</span> Game guide</button>
-          <button class="nav-link" data-view="reference"><span>▥</span> Reference tables</button>
-          <button class="nav-link" data-view="about"><span>ⓘ</span> Method</button>
-        </nav>
-        <div class="sidebar-footer">
-          <div class="status-dot"><i></i> OFFLINE DATA</div>
-          <small>v0.3 · verified 1.7.x data</small>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Trova le migliori combinazioni di tema, genere e console per Game Dev Tycoon e consulta le tre fasi di sviluppo.">
+  <title>GDT Companion — Combinazioni Game Dev Tycoon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260923-2">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="#classifica" aria-label="GDT Companion, vai alla classifica"><span class="brand-icon">✦</span><span>GDT <strong>Companion</strong></span></a>
+      <nav class="site-nav" aria-label="Navigazione principale"><a href="#classifica">Classifica</a><a href="#guida">Guida rapida</a><a href="#dati">Dati e metodo</a></nav>
+    </header>
+    <main>
+      <section id="classifica" class="planner-section">
+        <div class="intro">
+          <div><p class="kicker">GAME DEV TYCOON / PLANNER</p><h1>La prossima idea<br><em>parte da qui.</em></h1><p>Seleziona i temi che hai sbloccato, scegli genere e console, poi confronta le combinazioni migliori. Ogni risultato include il piano per le tre fasi di sviluppo.</p></div>
+          <div class="intro-aside"><span>COME FUNZIONA</span><strong>01</strong> Filtra i temi <strong>02</strong> Scegli il setup <strong>03</strong> Apri il piano</div>
         </div>
-      </aside>
-
-      <main class="main">
-        <header class="topbar">
-          <div><span class="eyebrow">GDT COMPANION / CREATE A GAME</span><h1>Find your next hit.</h1></div>
-          <div class="top-actions"><button class="icon-button" id="resetBtn" title="Reset filters">↺</button><div class="avatar">GD</div></div>
-        </header>
-
-        <section id="plannerView" class="view">
-          <div class="hero-card">
-            <div><p class="eyebrow accent">GAME BUILDER</p><h2>Choose the setup.<br /><em>See the best fit.</em></h2><p class="hero-copy">Select your unlocked topics and game constraints. The results below rank every valid topic × genre combination and explain the score.</p></div>
-            <div class="hero-summary"><strong>4 checks</strong><span>Topic · Genre · Audience · Platform</span></div>
-          </div>
-
-          <section class="control-panel">
-            <div class="builder-progress"><span class="progress-step active"><b>01</b> Your topics</span><i></i><span class="progress-step"><b>02</b> Game setup</span><i></i><span class="progress-step"><b>03</b> Game plan</span></div>
-            <div class="panel-heading"><div><span class="eyebrow">01 / YOUR TOPICS</span><h3>What have you unlocked?</h3></div><button class="text-button" id="selectAll">Select all topics</button></div>
-            <div class="controls-grid">
-              <div class="field field-wide topic-picker"><label for="topicSearch">YOUR TOPICS <span id="topicCount">0 selected</span></label><div class="search-input topic-search"><span>⌕</span><input id="topicSearch" type="search" placeholder="Search your unlocked topics..." /></div><div class="topic-actions"><button type="button" id="selectVisibleTopics">Select visible</button><button type="button" id="clearTopics">Clear all</button><span>Tap a topic to toggle it</span></div><div id="topicChips" class="chip-list"></div></div>
-              <div class="field genre-field"><label>GENRE</label><select id="genreFilter" class="select-hidden"><option value="all">All genres</option></select><div id="genreOptions" class="genre-options"></div><p class="field-hint">Choose the primary genre for your game.</p></div>
-              <div class="field"><label for="platformFilter">PLATFORM</label><select id="platformFilter"><option value="all">All platforms</option></select><p class="field-hint">Choose a console, or leave this open to get a recommendation for each genre.</p></div>
-              <div class="field"><label for="audienceFilter">TARGET AUDIENCE</label><select id="audienceFilter"><option>Everyone</option><option>Young</option><option>Mature</option></select><p class="field-hint">Topic and platform fit changes by audience.</p></div>
-              <div class="field"><label for="sizeFilter">GAME SIZE</label><select id="sizeFilter"><option>Small</option><option>Medium</option><option>Large</option><option>AAA</option></select><p class="field-hint">Larger games need more T/D output.</p></div>
+        <div class="planner-layout">
+          <aside class="filters" aria-labelledby="filters-title">
+            <div class="filters-heading"><div><p class="kicker">IL TUO SETUP</p><h2 id="filters-title">Filtri</h2></div><button id="resetFilters" class="text-button" type="button">Reimposta</button></div>
+            <div class="filter-block topic-filter">
+              <div class="filter-label"><label for="topicSearch">Temi</label><span id="selectedTopicCount">Tutti</span></div>
+              <p>Scegli uno o più temi. Senza selezione li confrontiamo tutti.</p>
+              <input id="topicSearch" type="search" placeholder="Cerca un tema…" autocomplete="off">
+              <div class="topic-toolbar"><button id="allTopics" type="button">Tutti i temi</button><button id="visibleTopics" type="button">Seleziona visibili</button></div>
+              <div id="topicChoices" class="topic-choices" role="group" aria-label="Seleziona temi"></div>
             </div>
-            <div class="builder-action"><span><strong>Ready to build?</strong><small>We will score every selected topic against this setup.</small></span><button class="primary-button" id="analyzeBtn">Analyze game <b>→</b></button></div>
-          </section>
-
-          <section id="analysisResult" class="analysis-result hidden"></section>
-          <section class="results-section"><div class="results-heading"><div><span class="eyebrow">TOP MATCHES FOR YOUR FILTERS</span><h3>Top combinations <span id="resultCount" class="count-pill">0</span></h3><p class="results-hint">Ranked by the combined score of topic × genre, genre × platform, topic × audience and platform × audience. Open a card for the full breakdown.</p></div><label class="sort-control">SORT BY <select id="sortFilter"><option value="score">Combined score</option><option value="sales">Sales potential</option><option value="alpha">Topic name</option></select></label></div><div id="results" class="results-grid"></div></section>
-        </section>
-
-        <section id="topicsView" class="view hidden"><div class="page-intro"><span class="eyebrow">COLLECTION</span><h2>My topics</h2><p>Toggle the topics available in your current game. Your preferences are saved automatically in this browser.</p></div><div id="topicManager" class="topic-manager"></div></section>
-        <section id="guideView" class="view hidden">
-          <div class="page-intro"><span class="eyebrow">FIELD MANUAL / 1.7.8</span><h2>Play smarter, not louder.</h2><p>A practical reference for the decisions the combination planner cannot make on its own. Use it alongside the ranking, not as a promise of a guaranteed 10/10.</p></div>
-          <div class="guide-grid">
-            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◎</span><span class="guide-label">THE FOUR CHECKS</span></div><h3>Start from compatibility</h3><p>Review the four relationships before committing to a game. Prefer <strong>+++</strong> wherever possible; avoid <strong>---</strong> and be cautious with <strong>--</strong>.</p><div class="compat-grid"><span>Topic × Genre<small>Great / Good / Okay</small></span><span>Topic × Audience<small>Most impactful pair</small></span><span>Platform × Genre<small>Must not be bad</small></span><span>Platform × Audience<small>Reach and sales</small></span></div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">▦</span><span class="guide-label">RESEARCH ORDER</span></div><h3>Spend research points well</h3><p>Prioritize unique unlocks such as Medium Games, Casual, audiences and better graphics. Rebuild your custom engine whenever a better graphics level is available.</p><div class="mini-sequence"><b>Graphics</b><i>→</i><b>Engine</b><i>→</i><b>Topics</b><i>→</i><b>Features</b></div></article>
-            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◒</span><span class="guide-label">SLIDER STARTING POINTS</span></div><h3>Genre focus by development phase</h3><p class="muted-copy">These are practical presets for the base game. Exact percentages can shift with game size, graphics features, employee skills and the topic. Every row is ordered as the three sliders shown in that phase.</p><div class="slider-table"><div class="slider-row slider-head"><span>Genre</span><span>Phase 1</span><span>Phase 2</span><span>Phase 3</span></div><div class="slider-row"><b>Action</b><span>100 / 80 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Adventure</b><span>0 / 80 / 100</span><span>100 / 0 / 0</span><span>100 / 80 / 0</span></div><div class="slider-row"><b>RPG</b><span>0 / 80 / 100</span><span>100 / 80 / 0</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Strategy</b><span>100 / 100 / 0</span><span>0 / 0 / 100</span><span>100 / 100 / 80</span></div><div class="slider-row"><b>Simulation</b><span>80 / 100 / 0</span><span>0 / 80 / 100</span><span>0 / 100 / 80</span></div><div class="slider-row"><b>Casual</b><span>0 / 100 / 0</span><span>0 / 100 / 0</span><span>0 / 50 / 100</span></div></div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">↺</span><span class="guide-label">QUALITY LOOP</span></div><h3>Do not repeat blindly</h3><p>Repeating the exact same topic + genre can reduce review scores. Rotate between strong pairs, and use new topics and combinations to gain experience and unlock research faster.</p><div class="callout">Change the pair, not necessarily the genre.</div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">◌</span><span class="guide-label">TEAM & SCALE</span></div><h3>Respect the game size</h3><p>Medium, Large and AAA games need increasingly higher T/D output. Train specialists for AAA, keep workloads under control, and use the strongest graphics your engine supports.</p><div class="scale-list"><span>Small <b>1.0×</b></span><span>Medium <b>1.2×</b></span><span>Large <b>1.4×</b></span><span>AAA <b>1.8×</b></span></div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">≈</span><span class="guide-label">REVIEW ENGINE</span></div><h3>Protect your future score</h3><p>Reviews are compared with your own Target High Score. Do not inflate it too quickly with unnecessary features: a steady run just above the 9 breakpoint is often safer than chasing a perfect 10 every time.</p><div class="callout">Your last best game changes the difficulty of the next one.</div></article>
-            <article class="guide-card"><div class="guide-card-top"><span class="guide-icon">⊕</span><span class="guide-label">MIXED GAMES</span></div><h3>Mix with a plan</h3><p>For multi-genre games, the first genre carries more weight than the second. For multi-platform games, choose the strongest platform first; extra reach can be worth a small review trade-off.</p><div class="mini-sequence"><b>Best fit</b><i>→</i><b>Second fit</b><i>→</i><b>More market share</b></div></article>
-            <article class="guide-card guide-card-wide"><div class="guide-card-top"><span class="guide-icon">◷</span><span class="guide-label">LATE GAME</span></div><h3>Large, AAA and MMO checklist</h3><div class="check-grid"><p>✓ Large games: keep making Medium games until your fanbase and team can support the jump.</p><p>✓ AAA: use at least 3D Graphics V5 and three specialists in important design aspects.</p><p>✓ MMO: use an MMO Support engine and a +++ topic/genre pair.</p><p>✓ Expansions: wait at least 40 weeks between releases to avoid the major quality hit.</p><p>✓ G3: time development so phase 2 overlaps the June convention boost.</p><p>✓ Custom hardware: keep your console tech level aligned with the current generation.</p></div></article>
+            <div class="filter-block"><label for="genreFilter">Genere</label><select id="genreFilter"><option value="all">Tutti i generi</option></select></div>
+            <div class="filter-block"><label for="platformFilter">Console</label><select id="platformFilter"><option value="best">Migliore per ogni combinazione</option><option value="all">Tutte le console</option></select><p>La scelta automatica mostra una sola console per tema e genere.</p></div>
+            <div class="filter-block"><label for="audienceFilter">Pubblico</label><select id="audienceFilter"><option value="Everyone">Tutti</option><option value="Young">Giovani</option><option value="Mature">Adulti</option></select></div>
+            <p class="filters-note">La classifica si aggiorna quando cambi un filtro. I temi selezionati vengono salvati su questo dispositivo.</p>
+          </aside>
+          <div class="ranking" aria-labelledby="ranking-title">
+            <div class="ranking-heading"><div><p class="kicker">RISULTATI</p><h2 id="ranking-title">Le migliori combinazioni</h2><p id="resultSummary" role="status" aria-live="polite"></p></div><span class="ranking-badge">↓ DAL MIGLIORE</span></div>
+            <div class="ranking-guide"><span class="guide-dot"></span> Il punteggio misura la compatibilità dei quattro abbinamenti. Non predice il voto della recensione.</div>
+            <div id="results" class="results-list"></div>
+            <button id="showMore" class="show-more" type="button" hidden>Mostra altri risultati</button>
           </div>
-        </section>
-        <section id="aboutView" class="view hidden"><div class="page-intro"><span class="eyebrow">HOW IT WORKS</span><h2>The method, no magic.</h2><p>GDT Companion provides a practical ranking, not an exact score prediction: in-game results also depend on sliders, design/tech points, audience, game size, freshness and your current Target High Score.</p></div><div class="method-grid"><article><span class="method-number">01</span><h3>Topic × genre</h3><p>The primary compatibility, from “Great” to “Bad”, carries the most weight.</p></article><article><span class="method-number">02</span><h3>Genre × platform</h3><p>Some platforms naturally favor certain genres; this filter helps narrow the field.</p></article><article><span class="method-number">03</span><h3>A signal, not a prophecy</h3><p>Use the ranking as a starting point for deciding what to develop next.</p></article></div><div class="sources"><h3>Sources consulted</h3><p>The consolidated tables were checked against the <a href="https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744" target="_blank" rel="noreferrer">Steam compatibility guide</a>, the <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild updated for 1.7.8</a>, the <a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">1.7.8 community guide</a> and its parts 2 and 3, plus the open-source <a href="https://github.com/boeloep/GameDevTycoon-Assistant" target="_blank" rel="noreferrer">GameDevTycoon-Assistant data tables</a>. The dataset is curated for the base game and can be expanded.</p></div></section>
-        <section id="referenceView" class="view hidden">
-          <div class="page-intro"><span class="eyebrow">REFERENCE / ALL TABLES</span><h2>The numbers behind the picks.</h2><p>Use this page when you want to inspect the full compatibility grid instead of getting a ranked shortlist. Values are the in-game language: <strong>+++</strong> Great, <strong>++</strong> Good, <strong>+</strong> Okay, <strong>--</strong> Bad, <strong>---</strong> Terrible.</p></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">TOPIC × GENRE</span><h3>All topic combinations</h3></div><input id="referenceSearch" class="reference-search" type="search" placeholder="Filter topics..." /></div><div class="table-wrap"><table id="topicMatrix" class="reference-table"></table></div></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">PLATFORM × GENRE</span><h3>Platform compatibility</h3></div></div><div class="table-wrap"><table id="platformMatrix" class="reference-table"></table></div></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">TOPIC × AUDIENCE</span><h3>Topic audience compatibility</h3></div></div><div class="table-wrap"><table id="audienceTopicMatrix" class="reference-table"></table></div></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">PLATFORM × AUDIENCE</span><h3>Platform audience compatibility</h3></div></div><div class="table-wrap"><table id="audiencePlatformMatrix" class="reference-table"></table></div></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">SLIDER REFERENCE</span><h3>Recommended phase percentages</h3></div><span class="table-note">Engine / Gameplay / Story · Dialogues / Level Design / AI · World Design / Graphics / Sound</span></div><div class="table-wrap"><table id="sliderMatrix" class="reference-table"></table></div></div>
-          <div class="reference-block"><div class="reference-heading"><div><span class="eyebrow">FINAL PRIORITY REFERENCE</span><h3>Topic-adjusted phase priorities</h3></div><span class="table-note">Final values used by the planner for each topic and genre.</span></div><div class="table-wrap"><table id="priorityMatrix" class="reference-table"></table></div></div>
-        </section>
-        <footer class="site-footer">
-          <div><span class="eyebrow">REFERENCE DESK</span><p>GDT Companion is a fan-made helper for Game Dev Tycoon. Game data and strategy notes are based on the sources below.</p></div>
-          <div class="footer-links"><a href="https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744" target="_blank" rel="noreferrer">Steam tables</a><a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noreferrer">Success Guild · 1.7.8</a><a href="https://www.reddit.com/r/GameDevTycoon/comments/1oge8gy/simpleish_guide_for_178_expanded/" target="_blank" rel="noreferrer">Community guide · part 1</a><a href="https://github.com/boeloep/GameDevTycoon-Assistant" target="_blank" rel="noreferrer">Verified 1.7.9 tables</a></div>
-          <small>Sources are credited for reference; GDT Companion is not affiliated with Greenheart Games.</small>
-        </footer>
-      </main>
-    </div>
-    <script src="data.js?v=20260923-1"></script>
-    <script src="app.js?v=20260923-1"></script>
-  </body>
+        </div>
+      </section>
+      <section id="guida" class="content-section">
+        <p class="kicker">DA TENERE A PORTATA DI MANO</p><h2>Guida rapida</h2><p class="section-lead">La compatibilità è un buon punto di partenza. Per un gioco riuscito contano anche le scelte durante lo sviluppo.</p>
+        <div class="guide-grid">
+          <article><span>01 / COMPATIBILITÀ</span><h3>Controlla i quattro abbinamenti</h3><p>Tema × genere, genere × console, tema × pubblico e console × pubblico compongono la classifica. Apri un risultato per vedere i singoli valori.</p></article>
+          <article><span>02 / SVILUPPO</span><h3>Regola le tre fasi</h3><p>I valori dei cursori sono indicazioni iniziali per il genere scelto. Dimensione del gioco, funzionalità e capacità del team possono richiedere modifiche.</p></article>
+          <article><span>03 / VARIETÀ</span><h3>Alterna le idee</h3><p>Ripetere di seguito lo stesso tema e genere può penalizzare il risultato. Tieni d’occhio anche la qualità raggiunta nei giochi precedenti.</p></article>
+          <article><span>04 / SCALA</span><h3>Cresci al momento giusto</h3><p>Giochi Medium, Large e AAA richiedono più punti Design e Tech. Migliora grafica e motore, poi amplia il team prima dei progetti più grandi.</p></article>
+        </div>
+      </section>
+      <section id="dati" class="content-section data-section">
+        <p class="kicker">TRASPARENZA</p><h2>Dati e metodo</h2><p class="section-lead">La classifica usa le tabelle di compatibilità del gioco. Ogni abbinamento vale da 0 a 100 punti: +++ = 100, ++ = 80, + = 60, -- = 30, --- = 0. Il totale massimo è 400. A parità di punteggio diamo precedenza a tema × genere e poi a genere × console.</p>
+        <details class="data-details"><summary>Consulta le tabelle di compatibilità</summary><div class="data-tables"><div><h3>Tema × genere</h3><div class="table-scroll"><table id="topicTable"></table></div></div><div><h3>Console × genere</h3><div class="table-scroll"><table id="platformTable"></table></div></div><div><h3>Tema × pubblico</h3><div class="table-scroll"><table id="topicAudienceTable"></table></div></div><div><h3>Console × pubblico</h3><div class="table-scroll"><table id="platformAudienceTable"></table></div></div></div></details>
+        <p class="sources">Fonti: <a href="https://steamcommunity.com/sharedfiles/filedetails/?l=romanian&id=216784744" target="_blank" rel="noopener noreferrer">tabelle Steam</a>, <a href="https://gamedevtycoon.fandom.com/wiki/Success_Guild_updated_for_1.7.8" target="_blank" rel="noopener noreferrer">Success Guild 1.7.8</a>, <a href="https://github.com/boeloep/GameDevTycoon-Assistant" target="_blank" rel="noopener noreferrer">GameDevTycoon-Assistant</a>. Le stime sono una guida per il gioco base, non una formula per il voto finale.</p>
+      </section>
+    </main>
+    <footer class="site-footer"><span>✦ GDT Companion</span><span>Progetto amatoriale non affiliato a Greenheart Games.</span></footer>
+  </div>
+  <script src="data.js?v=20260923-1"></script>
+  <script src="app.js?v=20260923-2"></script>
+</body>
 </html>
